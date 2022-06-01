@@ -32,10 +32,6 @@ const HomePage = () => {
     setCustomAPIData([...customAPIData, { ...data, id: Math.random() }]);
   }
 
-  async function toggleCustomAPI() {
-    alert("Add functionality to disable enable the API");
-  }
-
   async function deleteCustomAPI() {
     alert("Add functionality to delete the API");
   }
