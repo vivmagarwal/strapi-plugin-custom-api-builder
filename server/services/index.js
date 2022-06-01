@@ -1,11 +1,6 @@
 "use strict";
-
-const myService = require("./my-service");
-const slugService = require("./slug-service");
-const findService = require("./find-service");
+const customApiServices = require("./custom-api-services");
 
 module.exports = {
-  myService,
-  slugService,
-  findService,
+  customApiServices,
 };

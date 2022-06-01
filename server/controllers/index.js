@@ -1,9 +1,6 @@
 "use strict";
-
-const myController = require("./my-controller");
-const slugController = require("./slug-controller");
+const customApiControllers = require("./custom-api-controllers");
 
 module.exports = {
-  myController,
-  slugController,
+  customApiControllers,
 };
