@@ -1,3 +1,3 @@
-# Strapi plugin custom-api-builder
+# Strapi plugin custom-api
 
-A quick description of custom-api-builder.
+A quick description of custom-api.

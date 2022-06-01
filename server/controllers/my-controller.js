@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 module.exports = {
   index(ctx) {
     ctx.body = strapi
-      .plugin('custom-api-builder')
-      .service('myService')
+      .plugin("custom-api")
+      .service("myService")
       .getWelcomeMessage();
   },
 };

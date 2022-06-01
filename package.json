@@ -1,9 +1,9 @@
 {
-  "name": "custom-api-builder",
+  "name": "custom-api",
   "version": "0.0.0",
   "description": "This is the description of the plugin.",
   "strapi": {
-    "name": "custom-api-builder",
+    "name": "custom-api",
     "description": "Description of Custom Api Builder plugin",
     "kind": "plugin",
     "displayName": "Custom Api Builder"
