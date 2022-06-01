@@ -10,6 +10,8 @@ import { BaseHeaderLayout, HeaderLayout } from "@strapi/design-system/Layout";
 import { EmptyStateLayout } from "@strapi/design-system/EmptyStateLayout";
 import { Button } from "@strapi/design-system/Button";
 import Plus from "@strapi/icons/Plus";
+import { Stack } from "@strapi/design-system/Stack";
+import upperFirst from "lodash/upperFirst";
 import { Illo } from "../../components/Illo";
 import CustomAPICount from "../../components/CustomAPICount";
 import CustomAPITable from "../../components/CustomAPITable";
@@ -45,6 +47,8 @@ const HomePage = () => {
 
   return (
     <Layout>
+      {JSON.stringify(showCustomAPICustomizationPage)}
+
       <BaseHeaderLayout
         title="Custom API Builder Plugin"
         subtitle="Visually build a custom API endpoint for any content type with fields nested any level deep"
@@ -72,20 +76,50 @@ const HomePage = () => {
 
         {customAPIData.length > 0 && !showCustomAPICustomizationPage && (
           <>
-            <CustomAPICount count={customAPIData.length} />
-            <CustomAPITable
-              customAPIData={customAPIData}
-              setShowCustomAPICustomizationPage={
-                setShowCustomAPICustomizationPage
+            <HeaderLayout
+              id="title"
+              primaryAction={
+                <Stack horizontal spacing={2}>
+                  <Button
+                    startIcon={<Plus />}
+                    onClick={() => {
+                      setShowCustomAPICustomizationPage(true);
+                    }}
+                    type="submit"
+                    disabled={false}
+                  >
+                    Create new custom API
+                  </Button>
+                </Stack>
               }
-              toggleCustomAPI={toggleCustomAPI}
-              deleteCustomAPI={deleteCustomAPI}
-              editCustomAPI={editCustomAPI}
+              title={upperFirst(
+                `custom  API${customAPIData.length > 1 ? "s" : ""}`
+              )}
+              subtitle={`${customAPIData.length} ${
+                customAPIData.length > 1 ? "entries" : "entry"
+              } found`}
             />
+            <ContentLayout>
+              <CustomAPITable
+                customAPIData={customAPIData}
+                setShowCustomAPICustomizationPage={
+                  setShowCustomAPICustomizationPage
+                }
+                toggleCustomAPI={toggleCustomAPI}
+                deleteCustomAPI={deleteCustomAPI}
+                editCustomAPI={editCustomAPI}
+              />
+            </ContentLayout>
           </>
         )}
 
-        {showCustomAPICustomizationPage && <CustomAPICustomizationPage />}
+        {showCustomAPICustomizationPage && (
+          <CustomAPICustomizationPage
+            setShowCustomAPICustomizationPage={
+              setShowCustomAPICustomizationPage
+            }
+          />
+        )}
       </ContentLayout>
     </Layout>
   );

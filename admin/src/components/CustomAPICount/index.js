@@ -1,18 +1,44 @@
 import React from "react";
-import { Box } from "@strapi/design-system/Box";
+import { useTracking, Link } from "@strapi/helper-plugin";
+import ArrowLeft from "@strapi/icons/ArrowLeft";
+import Check from "@strapi/icons/Check";
+import Pencil from "@strapi/icons/Pencil";
 import { Flex } from "@strapi/design-system/Flex";
-import { Typography } from "@strapi/design-system/Typography";
+import { Box } from "@strapi/design-system/Box";
+import get from "lodash/get";
+import has from "lodash/has";
+import isEqual from "lodash/isEqual";
+import { useIntl } from "react-intl";
+import { Prompt, useRouteMatch } from "react-router-dom";
+import Plus from "@strapi/icons/Plus";
+import { Button } from "@strapi/design-system/Button";
+import { Stack } from "@strapi/design-system/Stack";
+import { HeaderLayout } from "@strapi/design-system/Layout";
+import upperFirst from "lodash/upperFirst";
 
-export default function CustomAPICount({ count }) {
+export default function CustomAPICount({
+  count,
+  setShowCustomAPICustomizationPage,
+}) {
   return (
-    <Box background="neutral0" hasRadius={true} shadow="filterShadow">
-      <Flex justifyContent="center" padding={8}>
-        <Typography variant="alpha">
-          {`You have ${count > 1 ? "a total of" : ""} ${count} custom  API${
-            count > 1 ? "s" : ""
-          } ${count > 0 ? "🚀" : ""}`}
-        </Typography>
-      </Flex>
-    </Box>
+    <>
+      <HeaderLayout
+        id="title"
+        primaryAction={
+          <Stack horizontal spacing={2}>
+            <Button
+              startIcon={<Plus />}
+              onClick={() => setShowCustomAPICustomizationPage(true)}
+              type="submit"
+              disabled={false}
+            >
+              Create new custom API
+            </Button>
+          </Stack>
+        }
+        title={upperFirst(`custom  API${count > 1 ? "s" : ""}`)}
+        subtitle={`${count} ${count > 1 ? "entries" : "entry"} found`}
+      />
+    </>
   );
 }
