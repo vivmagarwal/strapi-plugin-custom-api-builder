@@ -53,7 +53,6 @@ function CustomAPIInput({ value, onChange }) {
 
 export default function CustomAPITable({
   customAPIData,
-  toggleCustomAPI,
   deleteCustomAPI,
   editCustomAPI,
   setShowCustomAPICustomizationPage,
@@ -85,11 +84,11 @@ export default function CustomAPITable({
             </Th>
 
             <Th>
-              <Typography variant="sigma">CustomAPI</Typography>
+              <Typography variant="sigma">Custom API Name</Typography>
             </Th>
 
             <Th>
-              <Typography variant="sigma">Status</Typography>
+              <Typography variant="sigma">Slug</Typography>
             </Th>
 
             <Th>
@@ -100,10 +99,6 @@ export default function CustomAPITable({
 
         <Tbody>
           {customAPIData.map((customAPI) => {
-            const [inputValue, setInputValue] = useState(customAPI.name);
-
-            const [isEdit, setIsEdit] = useState(false);
-
             return (
               <Tr key={customAPI.id}>
                 <Td>
@@ -111,57 +106,35 @@ export default function CustomAPITable({
                 </Td>
 
                 <Td>
-                  {isEdit ? (
-                    <CustomAPIInput
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
+                  <Typography textColor="neutral800">
+                    {customAPI.name}
+                  </Typography>
+                </Td>
+
+                <Td>
+                  <Typography textColor="neutral800">
+                    {customAPI.slug}
+                  </Typography>
+                </Td>
+
+                <Td>
+                  <Flex style={{ justifyContent: "end" }}>
+                    <IconButton
+                      onClick={() => ({})}
+                      label="Edit"
+                      noBorder
+                      icon={<Pencil />}
                     />
-                  ) : (
-                    <Typography textColor="neutral800">
-                      {customAPI.name}
-                    </Typography>
-                  )}
-                </Td>
 
-                <Td>
-                  <CustomAPICheckbox
-                    value={customAPI.isDone}
-                    checkboxID={customAPI.id}
-                    callback={toggleCustomAPI}
-                    disabled={isEdit}
-                  />
-                </Td>
-
-                <Td>
-                  {isEdit ? (
-                    <Flex style={{ justifyContent: "end" }}>
-                      <Button
-                        onClick={() =>
-                          editCustomAPI(customAPI.id, { name: inputValue })
-                        }
-                      >
-                        Save
-                      </Button>
-                    </Flex>
-                  ) : (
-                    <Flex style={{ justifyContent: "end" }}>
+                    <Box paddingLeft={1}>
                       <IconButton
-                        onClick={() => setIsEdit(true)}
-                        label="Edit"
+                        onClick={() => deleteCustomAPI(customAPI)}
+                        label="Delete"
                         noBorder
-                        icon={<Pencil />}
+                        icon={<Trash />}
                       />
-
-                      <Box paddingLeft={1}>
-                        <IconButton
-                          onClick={() => deleteCustomAPI(customAPI)}
-                          label="Delete"
-                          noBorder
-                          icon={<Trash />}
-                        />
-                      </Box>
-                    </Flex>
-                  )}
+                    </Box>
+                  </Flex>
                 </Td>
               </Tr>
             );

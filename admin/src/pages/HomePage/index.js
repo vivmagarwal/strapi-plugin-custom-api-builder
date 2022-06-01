@@ -23,7 +23,6 @@ const HomePage = () => {
       id: Math.random(),
       name: "My Custom Report",
       slug: "my-custom-report",
-      isDone: true,
     },
   ]);
   const [showCustomAPICustomizationPage, setShowCustomAPICustomizationPage] =
@@ -105,7 +104,6 @@ const HomePage = () => {
                 setShowCustomAPICustomizationPage={
                   setShowCustomAPICustomizationPage
                 }
-                toggleCustomAPI={toggleCustomAPI}
                 deleteCustomAPI={deleteCustomAPI}
                 editCustomAPI={editCustomAPI}
               />
