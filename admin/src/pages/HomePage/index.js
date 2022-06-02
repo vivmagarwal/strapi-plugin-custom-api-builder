@@ -60,7 +60,7 @@ const HomePage = () => {
       />
 
       <ContentLayout>
-        {customAPIData.length === 0 && (
+        {customAPIData.length === 0 && !showCustomAPICustomizationPage && (
           <EmptyStateLayout
             icon={<Illo />}
             content="You don't have any Custom API yet..."
