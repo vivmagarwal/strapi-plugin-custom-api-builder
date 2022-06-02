@@ -12,10 +12,34 @@ import { Grid, GridItem } from "@strapi/design-system/Grid";
 import { ContentLayout, HeaderLayout } from "@strapi/design-system/Layout";
 import upperFirst from "lodash/upperFirst";
 import { TextInput } from "@strapi/design-system/TextInput";
+import customApiRequest from "../../api/custom-api";
 
-const CustomAPICustomizationPage = ({ setShowCustomAPICustomizationPage }) => {
+const CustomAPICustomizationPage = ({
+  setShowCustomAPICustomizationPage,
+  fetchData,
+  isLoading,
+}) => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+
+  const handleSubmit = async (e) => {
+    // Prevent submitting parent form
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      await customApiRequest.addCustomApi({
+        name: name,
+        slug: slug,
+      });
+
+      fetchData();
+
+      setShowCustomAPICustomizationPage(false);
+    } catch (e) {
+      console.log("error", e);
+    }
+  };
 
   return (
     <>
@@ -25,8 +49,8 @@ const CustomAPICustomizationPage = ({ setShowCustomAPICustomizationPage }) => {
           <Stack horizontal spacing={2}>
             <Button
               startIcon={<Check />}
-              onClick={() => ({})}
-              type="submit"
+              onClick={handleSubmit}
+              type="button"
               disabled={false}
             >
               Save
@@ -64,7 +88,6 @@ const CustomAPICustomizationPage = ({ setShowCustomAPICustomizationPage }) => {
                   label="Custom API Name"
                   name="name"
                   hint="A descriptive name"
-                  error={name.length > 5 ? "Content is too long" : undefined}
                   onChange={(e) => setName(e.target.value)}
                   value={name}
                 />
@@ -76,7 +99,6 @@ const CustomAPICustomizationPage = ({ setShowCustomAPICustomizationPage }) => {
                   label="Slug"
                   name="slug"
                   hint="A valid string that can be appended to URLs"
-                  error={slug.length > 5 ? "Content is too long" : undefined}
                   onChange={(e) => setSlug(e.target.value)}
                   value={slug}
                 />

@@ -4,11 +4,12 @@
  *
  */
 
-import React, { memo, useState } from "react";
+import React, { memo, useState, useEffect } from "react";
 import { Layout, ContentLayout } from "@strapi/design-system/Layout";
 import { BaseHeaderLayout, HeaderLayout } from "@strapi/design-system/Layout";
 import { EmptyStateLayout } from "@strapi/design-system/EmptyStateLayout";
 import { Button } from "@strapi/design-system/Button";
+import { LoadingIndicatorPage } from "@strapi/helper-plugin";
 import Plus from "@strapi/icons/Plus";
 import { Stack } from "@strapi/design-system/Stack";
 import upperFirst from "lodash/upperFirst";
@@ -16,21 +17,25 @@ import { Illo } from "../../components/Illo";
 import CustomAPICount from "../../components/CustomAPICount";
 import CustomAPITable from "../../components/CustomAPITable";
 import CustomAPICustomizationPage from "../CustomAPICustomizationPage";
+import customApiRequest from "../../api/custom-api";
 
 const HomePage = () => {
-  const [customAPIData, setCustomAPIData] = useState([
-    {
-      id: Math.random(),
-      name: "My Custom Report",
-      slug: "my-custom-report",
-    },
-  ]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [customAPIData, setCustomAPIData] = useState([]);
+
   const [showCustomAPICustomizationPage, setShowCustomAPICustomizationPage] =
     useState(false);
 
-  async function addCustomAPI(data) {
-    setCustomAPIData([...customAPIData, { ...data, id: Math.random() }]);
-  }
+  const fetchData = async () => {
+    if (isLoading === false) setIsLoading(true);
+    const customApiData = await customApiRequest.getAllCustomApis();
+    setCustomAPIData(customApiData);
+    setIsLoading(false);
+  };
+
+  useEffect(async () => {
+    fetchData();
+  }, []);
 
   async function deleteCustomAPI() {
     alert("Add functionality to delete the API");
@@ -40,10 +45,14 @@ const HomePage = () => {
     alert("Add functionality to edit the API");
   }
 
+  {
+    if (isLoading) {
+      return <LoadingIndicatorPage />;
+    }
+  }
+
   return (
     <Layout>
-      {JSON.stringify(showCustomAPICustomizationPage)}
-
       <BaseHeaderLayout
         title="Custom API Builder Plugin"
         subtitle="Visually build a custom API endpoint for any content type with fields nested any level deep"
@@ -112,6 +121,8 @@ const HomePage = () => {
             setShowCustomAPICustomizationPage={
               setShowCustomAPICustomizationPage
             }
+            isLoading={isLoading}
+            fetchData={fetchData}
           />
         )}
       </ContentLayout>
