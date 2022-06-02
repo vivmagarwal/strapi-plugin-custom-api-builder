@@ -46,6 +46,15 @@ module.exports = [
   },
   {
     method: "GET",
+    path: "/author-report",
+    handler: "customApiControllers.authorReport",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+  {
+    method: "GET",
     path: "/:slug",
     handler: "customApiControllers.findBySlug",
     config: {

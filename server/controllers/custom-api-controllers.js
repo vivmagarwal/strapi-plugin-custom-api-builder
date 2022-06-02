@@ -109,4 +109,48 @@ module.exports = {
       },
     };
   },
+
+  async authorReport() {
+    const config = {};
+
+    config["fields"] = null;
+    config["fields"] = [];
+    config["fields"].push("AuthorName");
+    config["fields"].push("AuthorAge");
+    config["populate"] = {};
+
+    config["populate"]["books"] = {};
+    config["populate"]["books"]["fields"] = null;
+    config["populate"]["books"]["fields"] = [];
+    config["populate"]["books"]["fields"].push("BookTitle");
+
+    config["populate"]["books"]["populate"] = {};
+    config["populate"]["books"]["populate"]["publishers"] = {};
+    config["populate"]["books"]["populate"]["publishers"]["fields"] = null;
+    config["populate"]["books"]["populate"]["publishers"]["fields"] = [];
+    config["populate"]["books"]["populate"]["publishers"]["fields"].push(
+      "PublisherName"
+    );
+
+    const entries = await strapi.entityService.findMany(
+      "api::author.author",
+      config
+    );
+
+    // const entries = await strapi.entityService.findMany("api::author.author", {
+    //   fields: ["AuthorName", "AuthorAge"],
+    //   populate: {
+    //     books: {
+    //       fields: ["BookTitle"],
+    //       populate: {
+    //         publishers: {
+    //           fields: ["PublisherName"],
+    //         },
+    //       },
+    //     },
+    //   },
+    // });
+
+    return entries;
+  },
 };
