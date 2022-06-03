@@ -15,6 +15,8 @@ import cloneDeepWith from "lodash/cloneDeepWith";
 import cloneDeep from "lodash/cloneDeep";
 import { TextInput } from "@strapi/design-system/TextInput";
 import customApiRequest from "../../api/custom-api";
+import { Select, Option } from "@strapi/design-system/Select";
+import { Typography } from "@strapi/design-system/Typography";
 import {
   Accordion,
   AccordionToggle,
@@ -35,7 +37,18 @@ const CustomAPICustomizationPage = ({
   const [contentTypes, setContentTypes] = useState([
     { uid: "api::author.author", displayName: "Author" },
     { uid: "api::book.book", displayName: "Book" },
+    { uid: "api::publisher.publisher", displayName: "Publisher" },
   ]);
+
+  // const [contentTypes, setContentTypes] = useState(async () => {
+  //   const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
+  //   return contentTypeDataRaw.map((item) => {
+  //     return {
+  //       uid: item.uid,
+  //       displayName: item.info.displayName,
+  //     };
+  //   });
+  // });
 
   const [selectedContentType, setSelectedContentType] = useState({
     uid: "api::author.author",
@@ -65,9 +78,14 @@ const CustomAPICustomizationPage = ({
       );
 
       if (editModeData) {
+        // edit mode
         console.log("editmodedata => ", editModeData);
         setName(editModeData.name);
         setSlug(editModeData.slug);
+        setSelectedContentType({
+          uid: "api::author.author",
+          displayName: "Author",
+        });
         setSelectableData(editModeData.structure);
       }
     } else {
@@ -105,6 +123,7 @@ const CustomAPICustomizationPage = ({
           {
             name: name,
             slug: slug,
+            selectedContentType: selectedContentType,
             structure: selectableData,
           }
         );
@@ -113,6 +132,7 @@ const CustomAPICustomizationPage = ({
         await customApiRequest.addCustomApi({
           name: name,
           slug: slug,
+          selectedContentType: selectedContentType,
           structure: selectableData,
         });
       }
@@ -191,18 +211,60 @@ const CustomAPICustomizationPage = ({
           </Box>
         </Stack>
 
-        <Box>
-          <div> Rendering the deeply nested data...</div>
+        <Box
+          padding={10}
+          background="neutral0"
+          shadow="filterShadow"
+          hasRadius
+          style={{
+            marginTop: 10,
+          }}
+        >
+          <Stack spacing={11}>
+            <Typography variant="beta">
+              The selected Content Type is: {selectedContentType.displayName}
+            </Typography>
+            <Select
+              id="select1"
+              label="Choose the content-type"
+              required
+              placeholder="select a content type"
+              hint="Relationships will automatically be mapped below"
+              onClear={() => setSelectedContentType(undefined)}
+              clearLabel="Clear content types"
+              value={selectedContentType.uid}
+              onChange={(val) => {
+                setSelectedContentType(
+                  contentTypes.filter((item) => item.uid === val)[0]
+                );
+              }}
+            >
+              {contentTypes &&
+                contentTypes.length &&
+                contentTypes.map((item) => {
+                  return (
+                    <Option key={item.uid} value={item.uid}>
+                      {item.displayName}
+                    </Option>
+                  );
+                })}
+            </Select>
+          </Stack>
+        </Box>
+
+        <Box
+          padding={10}
+          background="neutral0"
+          shadow="filterShadow"
+          hasRadius
+          style={{
+            marginTop: 10,
+          }}
+        >
           <RenderDeeplyNestedObject
             data={selectableData["populate"]}
             toggleSelectedOfField={toggleSelectedOfField}
           />
-          <div>
-            <hr />
-            <code>
-              <pre>{JSON.stringify(selectableData, null, 2)}</pre>
-            </code>
-          </div>
         </Box>
       </ContentLayout>
     </>
@@ -212,6 +274,8 @@ const CustomAPICustomizationPage = ({
 // todo: save the raw data and reuse it
 async function fetchContentTypeData({ uid }) {
   const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
+  console.log("contentTypeDataRaw => ", contentTypeDataRaw);
+
   const selectedContentTypeRaw = contentTypeDataRaw.filter(
     (item) => item.uid === uid
   )[0];
