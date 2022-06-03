@@ -13,22 +13,79 @@ import { ContentLayout, HeaderLayout } from "@strapi/design-system/Layout";
 import upperFirst from "lodash/upperFirst";
 import { TextInput } from "@strapi/design-system/TextInput";
 import customApiRequest from "../../api/custom-api";
+import {
+  Accordion,
+  AccordionToggle,
+  AccordionContent,
+  AccordionGroup,
+} from "@strapi/design-system/Accordion";
+import { BaseCheckbox } from "@strapi/design-system/BaseCheckbox";
+
+function TablesAccordion({ children, table, ...rest }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <Accordion
+      expanded={expanded}
+      onToggle={() => setExpanded((s) => !s)}
+      id="acc-1"
+      size="S"
+      {...rest}
+    >
+      <AccordionToggle title={table} />
+      <AccordionContent>
+        <Box padding={3}>{children}</Box>
+      </AccordionContent>
+    </Accordion>
+  );
+}
+
+function FieldsCheckbox({ field }) {
+  const [val, setValue] = useState(field.selected);
+  return (
+    <Box>
+      <BaseCheckbox
+        aria-label="fields checkbox"
+        name={`base-checkbox-${field.name}`}
+        id={`base-checkbox-${field.name}`}
+        onValueChange={(value) => setValue(value)}
+        value={val}
+      />
+      <label style={{ marginLeft: 5 }} htmlFor={`base-checkbox-${field.name}`}>
+        {field.name}
+      </label>
+    </Box>
+  );
+}
 
 function RenderDeeplyNestedObject({ data }) {
   let { table, fields, populate } = data;
 
   return (
     <>
-      <div>{table}</div>
+      <Box padding={8} background="neutral100">
+        <TablesAccordion table={table}>
+          <ul>
+            {fields.map((field) => {
+              return <FieldsCheckbox key={field.name} field={field} />;
+            })}
+
+            {populate && populate.table && (
+              <RenderDeeplyNestedObject data={populate} />
+            )}
+          </ul>
+        </TablesAccordion>
+      </Box>
+
+      {/* <div>{table}</div>
       <ul>
         {fields.map((field) => {
-          return <li key={field}>{field}</li>;
+          return <li key={field.name}>{field.name}</li>;
         })}
 
         {populate && populate.table && (
           <RenderDeeplyNestedObject data={populate} />
         )}
-      </ul>
+      </ul> */}
     </>
   );
 }
@@ -54,13 +111,16 @@ const CustomAPICustomizationPage = ({
   const [selectableData, setSelectableData] = useState({
     populate: {
       table: "Authors",
-      fields: ["AuthorName", "AuthorAge"],
+      fields: [
+        { selected: false, name: "AuthorName" },
+        { selected: false, name: "AuthorAge" },
+      ],
       populate: {
         table: "Books",
-        fields: ["BookTitle"],
+        fields: [{ selected: false, name: "BookTitle" }],
         populate: {
           table: "Publishers",
-          fields: ["PublisherName"],
+          fields: [{ selected: false, name: "PublisherName" }],
           populate: null,
         },
       },
@@ -163,6 +223,12 @@ const CustomAPICustomizationPage = ({
         <Box>
           <div> Rendering the deeply nested data...</div>
           <RenderDeeplyNestedObject data={selectableData["populate"]} />
+          <div>
+            <hr />
+            <code>
+              <pre>{JSON.stringify(selectableData, null, 2)}</pre>
+            </code>
+          </div>
         </Box>
       </ContentLayout>
     </>
