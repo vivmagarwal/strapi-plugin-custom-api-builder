@@ -28,6 +28,9 @@
       "type": "uid",
       "targetField": "name",
       "required": true
+    },
+    "structure": {
+      "type": "json"
     }
   }
 }

@@ -109,6 +109,14 @@ const CustomAPICustomizationPage = ({
 }) => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  const [structure, setStructure] = useState(
+    JSON.stringify({
+      populate: {
+        table: "",
+        fields: [],
+      },
+    })
+  );
 
   const [contentTypes, setContentTypes] = useState([
     { uid: "api::author.author", displayName: "Author" },
@@ -122,20 +130,8 @@ const CustomAPICustomizationPage = ({
 
   const [selectableData, setSelectableData] = useState({
     populate: {
-      table: "Authors",
-      fields: [
-        { selected: false, name: "AuthorName" },
-        { selected: false, name: "AuthorAge" },
-      ],
-      populate: {
-        table: "Books",
-        fields: [{ selected: false, name: "BookTitle" }],
-        populate: {
-          table: "Publishers",
-          fields: [{ selected: false, name: "PublisherName" }],
-          populate: null,
-        },
-      },
+      table: "",
+      fields: [],
     },
   });
 
@@ -217,6 +213,12 @@ const CustomAPICustomizationPage = ({
       reducedEntries: reducedEntries,
     });
 
+    setSelectableData(reducedEntries);
+
+    if (reducedEntries) {
+      setStructure(JSON.stringify(reducedEntries));
+    }
+
     console.log("reducedEntries => ", reducedEntries);
   }, []);
 
@@ -229,6 +231,7 @@ const CustomAPICustomizationPage = ({
       await customApiRequest.addCustomApi({
         name: name,
         slug: slug,
+        structure: structure,
       });
 
       fetchData();
