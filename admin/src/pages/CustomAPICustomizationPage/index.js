@@ -11,6 +11,7 @@ import { Box } from "@strapi/design-system/Box";
 import { Grid, GridItem } from "@strapi/design-system/Grid";
 import { ContentLayout, HeaderLayout } from "@strapi/design-system/Layout";
 import upperFirst from "lodash/upperFirst";
+import cloneDeepWith from "lodash/cloneDeepWith";
 import { TextInput } from "@strapi/design-system/TextInput";
 import customApiRequest from "../../api/custom-api";
 import {
@@ -39,7 +40,7 @@ function TablesAccordion({ children, table, ...rest }) {
   );
 }
 
-function FieldsCheckbox({ field }) {
+function FieldsCheckbox({ field, toggleSelectedOfField }) {
   const [val, setValue] = useState(field.selected);
   return (
     <Box>
@@ -47,7 +48,10 @@ function FieldsCheckbox({ field }) {
         aria-label="fields checkbox"
         name={`base-checkbox-${field.name}`}
         id={`base-checkbox-${field.name}`}
-        onValueChange={(value) => setValue(value)}
+        onValueChange={(value) => {
+          setValue(value);
+          toggleSelectedOfField(field.name);
+        }}
         value={val}
       />
       <label style={{ marginLeft: 5 }} htmlFor={`base-checkbox-${field.name}`}>
@@ -57,20 +61,38 @@ function FieldsCheckbox({ field }) {
   );
 }
 
-function RenderDeeplyNestedObject({ data }) {
-  let { table, fields, populate } = data;
+// todo: add table check to make it more robust.
+function getNewDataWithToggledSelected(entries, fieldName) {
+  const result = cloneDeepWith(entries, (value) => {
+    return value && value.name == fieldName
+      ? { ...value, selected: !value.selected }
+      : _.noop();
+  });
+  return result;
+}
 
+function RenderDeeplyNestedObject({ data, toggleSelectedOfField }) {
+  let { table, fields, populate } = data;
   return (
     <>
       <Box padding={8} background="neutral100">
         <TablesAccordion table={table}>
           <ul>
             {fields.map((field) => {
-              return <FieldsCheckbox key={field.name} field={field} />;
+              return (
+                <FieldsCheckbox
+                  key={field.name}
+                  field={field}
+                  toggleSelectedOfField={toggleSelectedOfField}
+                />
+              );
             })}
 
             {populate && populate.table && (
-              <RenderDeeplyNestedObject data={populate} />
+              <RenderDeeplyNestedObject
+                data={populate}
+                toggleSelectedOfField={toggleSelectedOfField}
+              />
             )}
           </ul>
         </TablesAccordion>
@@ -126,6 +148,14 @@ const CustomAPICustomizationPage = ({
       },
     },
   });
+
+  function toggleSelectedOfField(fieldNameToToggle) {
+    const updatedData = getNewDataWithToggledSelected(
+      selectableData,
+      fieldNameToToggle
+    );
+    setSelectableData(updatedData);
+  }
 
   const fetchContentTypeData = async () => {
     const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
@@ -222,7 +252,10 @@ const CustomAPICustomizationPage = ({
 
         <Box>
           <div> Rendering the deeply nested data...</div>
-          <RenderDeeplyNestedObject data={selectableData["populate"]} />
+          <RenderDeeplyNestedObject
+            data={selectableData["populate"]}
+            toggleSelectedOfField={toggleSelectedOfField}
+          />
           <div>
             <hr />
             <code>
