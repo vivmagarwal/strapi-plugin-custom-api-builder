@@ -23,85 +23,6 @@ import {
 } from "@strapi/design-system/Accordion";
 import { BaseCheckbox } from "@strapi/design-system/BaseCheckbox";
 
-function TablesAccordion({ children, table, ...rest }) {
-  const [expanded, setExpanded] = useState(false);
-  return (
-    <Accordion
-      expanded={expanded}
-      onToggle={() => setExpanded((s) => !s)}
-      id="acc-1"
-      size="S"
-      {...rest}
-    >
-      <AccordionToggle title={table} />
-      <AccordionContent>
-        <Box padding={3}>{children}</Box>
-      </AccordionContent>
-    </Accordion>
-  );
-}
-
-function FieldsCheckbox({ field, toggleSelectedOfField }) {
-  const [val, setValue] = useState(field.selected);
-  return (
-    <Box>
-      <BaseCheckbox
-        aria-label="fields checkbox"
-        name={`base-checkbox-${field.name}`}
-        id={`base-checkbox-${field.name}`}
-        onValueChange={(value) => {
-          setValue(value);
-          toggleSelectedOfField(field.name);
-        }}
-        value={val}
-      />
-      <label style={{ marginLeft: 5 }} htmlFor={`base-checkbox-${field.name}`}>
-        {field.name}
-      </label>
-    </Box>
-  );
-}
-
-// todo: add table check to make it more robust.
-function getNewDataWithToggledSelected(entries, fieldName) {
-  const result = cloneDeepWith(entries, (value) => {
-    return value && value.name == fieldName
-      ? { ...value, selected: !value.selected }
-      : _.noop();
-  });
-  return result;
-}
-
-function RenderDeeplyNestedObject({ data, toggleSelectedOfField }) {
-  let { table, fields, populate } = data;
-  return (
-    <>
-      <Box padding={8} background="neutral100">
-        <TablesAccordion table={table}>
-          <ul>
-            {fields.map((field) => {
-              return (
-                <FieldsCheckbox
-                  key={field.name}
-                  field={field}
-                  toggleSelectedOfField={toggleSelectedOfField}
-                />
-              );
-            })}
-
-            {populate && populate.table && (
-              <RenderDeeplyNestedObject
-                data={populate}
-                toggleSelectedOfField={toggleSelectedOfField}
-              />
-            )}
-          </ul>
-        </TablesAccordion>
-      </Box>
-    </>
-  );
-}
-
 const CustomAPICustomizationPage = ({
   setShowCustomAPICustomizationPage,
   fetchData,
@@ -143,61 +64,6 @@ const CustomAPICustomizationPage = ({
     setSelectableData(updatedData);
   }
 
-  async function getReducedDataObject({
-    currentContentTypeRaw,
-    iteratedUIDs,
-    reducedEntries,
-  }) {
-    console.log("currentContentTypeRaw => ", currentContentTypeRaw);
-    let reducedContentData = {};
-
-    iteratedUIDs.push(currentContentTypeRaw.uid);
-
-    reducedContentData["table"] = currentContentTypeRaw.info.displayName;
-
-    if (!reducedContentData["fields"]) reducedContentData["fields"] = [];
-
-    for (const key of Object.keys(currentContentTypeRaw.attributes)) {
-      if (currentContentTypeRaw.attributes[key].type !== "relation") {
-        reducedContentData["fields"].push({
-          selected: false,
-          name: key,
-        });
-      }
-
-      if (currentContentTypeRaw.attributes[key].type === "relation") {
-        const relationalUid = currentContentTypeRaw.attributes[key].target;
-        console.log("iteratedUIDs => ", iteratedUIDs);
-        if (!iteratedUIDs.includes(relationalUid)) {
-          const selectedContentTypeRaw = await fetchContentTypeData({
-            uid: relationalUid,
-          });
-          console.log(
-            "selectedContentTypeRaw recursive => ",
-            selectedContentTypeRaw
-          );
-
-          await getReducedDataObject({
-            currentContentTypeRaw: selectedContentTypeRaw,
-            iteratedUIDs: iteratedUIDs,
-            reducedEntries: reducedContentData,
-          });
-        }
-      }
-    }
-
-    reducedEntries["populate"] = reducedContentData;
-  }
-
-  // todo: save the raw data and reuse it
-  const fetchContentTypeData = async ({ uid }) => {
-    const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
-    const selectedContentTypeRaw = contentTypeDataRaw.filter(
-      (item) => item.uid === uid
-    )[0];
-    return selectedContentTypeRaw;
-  };
-
   useEffect(async () => {
     const selectedContentTypeRaw = await fetchContentTypeData({
       uid: selectedContentType.uid,
@@ -205,7 +71,7 @@ const CustomAPICustomizationPage = ({
 
     if (!selectedContentTypeRaw) return;
 
-    const iteratedUIDs = ["test"];
+    const iteratedUIDs = [];
     const reducedEntries = {};
     await getReducedDataObject({
       currentContentTypeRaw: cloneDeep(selectedContentTypeRaw),
@@ -325,5 +191,134 @@ const CustomAPICustomizationPage = ({
     </>
   );
 };
+
+// todo: save the raw data and reuse it
+async function fetchContentTypeData({ uid }) {
+  const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
+  const selectedContentTypeRaw = contentTypeDataRaw.filter(
+    (item) => item.uid === uid
+  )[0];
+  return selectedContentTypeRaw;
+}
+
+async function getReducedDataObject({
+  currentContentTypeRaw,
+  iteratedUIDs,
+  reducedEntries,
+}) {
+  let reducedContentData = {};
+
+  iteratedUIDs.push(currentContentTypeRaw.uid);
+
+  reducedContentData["table"] = currentContentTypeRaw.info.displayName;
+
+  if (!reducedContentData["fields"]) reducedContentData["fields"] = [];
+
+  for (const key of Object.keys(currentContentTypeRaw.attributes)) {
+    if (currentContentTypeRaw.attributes[key].type !== "relation") {
+      reducedContentData["fields"].push({
+        selected: false,
+        name: key,
+      });
+    }
+
+    if (currentContentTypeRaw.attributes[key].type === "relation") {
+      const relationalUid = currentContentTypeRaw.attributes[key].target;
+
+      if (!iteratedUIDs.includes(relationalUid)) {
+        const selectedContentTypeRaw = await fetchContentTypeData({
+          uid: relationalUid,
+        });
+
+        await getReducedDataObject({
+          currentContentTypeRaw: selectedContentTypeRaw,
+          iteratedUIDs: iteratedUIDs,
+          reducedEntries: reducedContentData,
+        });
+      }
+    }
+  }
+
+  reducedEntries["populate"] = reducedContentData;
+}
+
+function TablesAccordion({ children, table, ...rest }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <Accordion
+      expanded={expanded}
+      onToggle={() => setExpanded((s) => !s)}
+      id="acc-1"
+      size="S"
+      {...rest}
+    >
+      <AccordionToggle title={table} />
+      <AccordionContent>
+        <Box padding={3}>{children}</Box>
+      </AccordionContent>
+    </Accordion>
+  );
+}
+
+function FieldsCheckbox({ field, toggleSelectedOfField }) {
+  const [val, setValue] = useState(field.selected);
+  return (
+    <Box>
+      <BaseCheckbox
+        aria-label="fields checkbox"
+        name={`base-checkbox-${field.name}`}
+        id={`base-checkbox-${field.name}`}
+        onValueChange={(value) => {
+          setValue(value);
+          toggleSelectedOfField(field.name);
+        }}
+        value={val}
+      />
+      <label style={{ marginLeft: 5 }} htmlFor={`base-checkbox-${field.name}`}>
+        {field.name}
+      </label>
+    </Box>
+  );
+}
+
+// todo: add table check to make it more robust.
+function getNewDataWithToggledSelected(entries, fieldName) {
+  const result = cloneDeepWith(entries, (value) => {
+    return value && value.name == fieldName
+      ? { ...value, selected: !value.selected }
+      : _.noop();
+  });
+  return result;
+}
+
+function RenderDeeplyNestedObject({ data, toggleSelectedOfField }) {
+  let { table, fields, populate } = data;
+  return (
+    <>
+      <Box padding={8} background="neutral100">
+        <TablesAccordion table={table}>
+          <ul>
+            {fields.map((field) => {
+              return (
+                <FieldsCheckbox
+                  key={field.name}
+                  field={field}
+                  toggleSelectedOfField={toggleSelectedOfField}
+                />
+              );
+            })}
+
+            {populate && populate.table && (
+              <RenderDeeplyNestedObject
+                data={populate}
+                toggleSelectedOfField={toggleSelectedOfField}
+              />
+            )}
+          </ul>
+        </TablesAccordion>
+      </Box>
+    </>
+  );
+}
 
 export default CustomAPICustomizationPage;
