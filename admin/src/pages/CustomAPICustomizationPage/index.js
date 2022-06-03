@@ -12,6 +12,7 @@ import { Grid, GridItem } from "@strapi/design-system/Grid";
 import { ContentLayout, HeaderLayout } from "@strapi/design-system/Layout";
 import upperFirst from "lodash/upperFirst";
 import cloneDeepWith from "lodash/cloneDeepWith";
+import cloneDeep from "lodash/cloneDeep";
 import { TextInput } from "@strapi/design-system/TextInput";
 import customApiRequest from "../../api/custom-api";
 import {
@@ -97,17 +98,6 @@ function RenderDeeplyNestedObject({ data, toggleSelectedOfField }) {
           </ul>
         </TablesAccordion>
       </Box>
-
-      {/* <div>{table}</div>
-      <ul>
-        {fields.map((field) => {
-          return <li key={field.name}>{field.name}</li>;
-        })}
-
-        {populate && populate.table && (
-          <RenderDeeplyNestedObject data={populate} />
-        )}
-      </ul> */}
     </>
   );
 }
@@ -157,12 +147,77 @@ const CustomAPICustomizationPage = ({
     setSelectableData(updatedData);
   }
 
-  const fetchContentTypeData = async () => {
+  async function getReducedDataObject({
+    currentContentTypeRaw,
+    iteratedUIDs,
+    reducedEntries,
+  }) {
+    console.log("currentContentTypeRaw => ", currentContentTypeRaw);
+    let reducedContentData = {};
+
+    iteratedUIDs.push(currentContentTypeRaw.uid);
+
+    reducedContentData["table"] = currentContentTypeRaw.info.displayName;
+
+    if (!reducedContentData["fields"]) reducedContentData["fields"] = [];
+
+    for (const key of Object.keys(currentContentTypeRaw.attributes)) {
+      if (currentContentTypeRaw.attributes[key].type !== "relation") {
+        reducedContentData["fields"].push({
+          selected: false,
+          name: key,
+        });
+      }
+
+      if (currentContentTypeRaw.attributes[key].type === "relation") {
+        const relationalUid = currentContentTypeRaw.attributes[key].target;
+        console.log("iteratedUIDs => ", iteratedUIDs);
+        if (!iteratedUIDs.includes(relationalUid)) {
+          const selectedContentTypeRaw = await fetchContentTypeData({
+            uid: relationalUid,
+          });
+          console.log(
+            "selectedContentTypeRaw recursive => ",
+            selectedContentTypeRaw
+          );
+
+          await getReducedDataObject({
+            currentContentTypeRaw: selectedContentTypeRaw,
+            iteratedUIDs: iteratedUIDs,
+            reducedEntries: reducedContentData,
+          });
+        }
+      }
+    }
+
+    reducedEntries["populate"] = reducedContentData;
+  }
+
+  // todo: save the raw data and reuse it
+  const fetchContentTypeData = async ({ uid }) => {
     const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
+    const selectedContentTypeRaw = contentTypeDataRaw.filter(
+      (item) => item.uid === uid
+    )[0];
+    return selectedContentTypeRaw;
   };
 
   useEffect(async () => {
-    fetchContentTypeData();
+    const selectedContentTypeRaw = await fetchContentTypeData({
+      uid: selectedContentType.uid,
+    });
+
+    if (!selectedContentTypeRaw) return;
+
+    const iteratedUIDs = ["test"];
+    const reducedEntries = {};
+    await getReducedDataObject({
+      currentContentTypeRaw: cloneDeep(selectedContentTypeRaw),
+      iteratedUIDs: iteratedUIDs,
+      reducedEntries: reducedEntries,
+    });
+
+    console.log("reducedEntries => ", reducedEntries);
   }, []);
 
   const handleSubmit = async (e) => {
