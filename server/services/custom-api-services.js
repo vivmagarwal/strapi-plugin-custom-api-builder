@@ -19,4 +19,20 @@ module.exports = ({ strapi }) => ({
       query
     );
   },
+
+  async findById(id, query) {
+    return await strapi.entityService.findOne(
+      "plugin::custom-api.custom-api",
+      id,
+      query
+    );
+  },
+
+  async update(id, data) {
+    return await strapi.entityService.update(
+      "plugin::custom-api.custom-api",
+      id,
+      data
+    );
+  },
 });

@@ -24,20 +24,13 @@ import {
 import { BaseCheckbox } from "@strapi/design-system/BaseCheckbox";
 
 const CustomAPICustomizationPage = ({
+  showCustomAPICustomizationPage,
   setShowCustomAPICustomizationPage,
   fetchData,
   isLoading,
 }) => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [structure, setStructure] = useState(
-    JSON.stringify({
-      populate: {
-        table: "",
-        fields: [],
-      },
-    })
-  );
 
   const [contentTypes, setContentTypes] = useState([
     { uid: "api::author.author", displayName: "Author" },
@@ -65,27 +58,38 @@ const CustomAPICustomizationPage = ({
   }
 
   useEffect(async () => {
-    const selectedContentTypeRaw = await fetchContentTypeData({
-      uid: selectedContentType.uid,
-    });
+    if (showCustomAPICustomizationPage && showCustomAPICustomizationPage.id) {
+      // edit mode with id
+      const editModeData = await customApiRequest.getCustomApiById(
+        showCustomAPICustomizationPage.id
+      );
 
-    if (!selectedContentTypeRaw) return;
+      if (editModeData) {
+        console.log("editmodedata => ", editModeData);
+        setName(editModeData.name);
+        setSlug(editModeData.slug);
+        setSelectableData(editModeData.structure);
+      }
+    } else {
+      // create mode
+      const selectedContentTypeRaw = await fetchContentTypeData({
+        uid: selectedContentType.uid,
+      });
 
-    const iteratedUIDs = [];
-    const reducedEntries = {};
-    await getReducedDataObject({
-      currentContentTypeRaw: cloneDeep(selectedContentTypeRaw),
-      iteratedUIDs: iteratedUIDs,
-      reducedEntries: reducedEntries,
-    });
+      if (!selectedContentTypeRaw) return;
 
-    setSelectableData(reducedEntries);
+      const iteratedUIDs = [];
+      const reducedEntries = {};
+      await getReducedDataObject({
+        currentContentTypeRaw: cloneDeep(selectedContentTypeRaw),
+        iteratedUIDs: iteratedUIDs,
+        reducedEntries: reducedEntries,
+      });
 
-    if (reducedEntries) {
-      setStructure(JSON.stringify(reducedEntries));
+      if (reducedEntries) {
+        setSelectableData(reducedEntries);
+      }
     }
-
-    console.log("reducedEntries => ", reducedEntries);
   }, []);
 
   const handleSubmit = async (e) => {
@@ -94,11 +98,24 @@ const CustomAPICustomizationPage = ({
     e.stopPropagation();
 
     try {
-      await customApiRequest.addCustomApi({
-        name: name,
-        slug: slug,
-        structure: structure,
-      });
+      if (showCustomAPICustomizationPage && showCustomAPICustomizationPage.id) {
+        //edit mode
+        await customApiRequest.updateCustomApi(
+          showCustomAPICustomizationPage.id,
+          {
+            name: name,
+            slug: slug,
+            structure: selectableData,
+          }
+        );
+      } else {
+        // create mode
+        await customApiRequest.addCustomApi({
+          name: name,
+          slug: slug,
+          structure: selectableData,
+        });
+      }
 
       fetchData();
 

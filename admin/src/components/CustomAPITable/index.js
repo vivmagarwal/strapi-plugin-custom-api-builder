@@ -120,7 +120,7 @@ export default function CustomAPITable({
                 <Td>
                   <Flex style={{ justifyContent: "end" }}>
                     <IconButton
-                      onClick={() => ({})}
+                      onClick={() => editCustomAPI(customAPI.id)}
                       label="Edit"
                       noBorder
                       icon={<Pencil />}

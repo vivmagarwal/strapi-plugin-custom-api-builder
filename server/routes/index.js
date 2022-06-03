@@ -9,9 +9,27 @@ module.exports = [
     },
   },
   {
+    method: "GET",
+    path: "/find/:id",
+    handler: "customApiControllers.findById",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+  {
     method: "POST",
     path: "/create",
     handler: "customApiControllers.create",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+  {
+    method: "PUT",
+    path: "/update/:id",
+    handler: "customApiControllers.update",
     config: {
       policies: [],
       auth: false,

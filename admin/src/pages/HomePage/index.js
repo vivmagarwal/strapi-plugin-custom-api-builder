@@ -24,7 +24,7 @@ const HomePage = () => {
   const [customAPIData, setCustomAPIData] = useState([]);
 
   const [showCustomAPICustomizationPage, setShowCustomAPICustomizationPage] =
-    useState(true);
+    useState(false);
 
   const fetchData = async () => {
     if (isLoading === false) setIsLoading(true);
@@ -41,8 +41,8 @@ const HomePage = () => {
     alert("Add functionality to delete the API");
   }
 
-  async function editCustomAPI() {
-    alert("Add functionality to edit the API");
+  async function editCustomAPI(id) {
+    setShowCustomAPICustomizationPage({ id: id });
   }
 
   {
@@ -66,9 +66,7 @@ const HomePage = () => {
             content="You don't have any Custom API yet..."
             action={
               <Button
-                onClick={() =>
-                  setShowCustomAPICustomizationPage({ createMode: true })
-                }
+                onClick={() => setShowCustomAPICustomizationPage({ id: null })}
                 variant="secondary"
                 startIcon={<Plus />}
               >
@@ -87,7 +85,7 @@ const HomePage = () => {
                   <Button
                     startIcon={<Plus />}
                     onClick={() => {
-                      setShowCustomAPICustomizationPage(true);
+                      setShowCustomAPICustomizationPage({ id: null });
                     }}
                     type="submit"
                     disabled={false}
@@ -118,6 +116,7 @@ const HomePage = () => {
 
         {showCustomAPICustomizationPage && (
           <CustomAPICustomizationPage
+            showCustomAPICustomizationPage={showCustomAPICustomizationPage}
             setShowCustomAPICustomizationPage={
               setShowCustomAPICustomizationPage
             }

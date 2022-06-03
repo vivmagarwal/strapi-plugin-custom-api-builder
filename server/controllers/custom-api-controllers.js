@@ -28,6 +28,19 @@ module.exports = {
       ctx.throw(500, error);
     }
   },
+
+  async findById(ctx) {
+    const { id } = ctx.params;
+    try {
+      return await strapi
+        .plugin("custom-api")
+        .service("customApiServices")
+        .findById(id, ctx.query);
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
+
   async findBySlug(ctx) {
     const { id, slug } = ctx.params;
     const { query } = ctx;
@@ -38,6 +51,7 @@ module.exports = {
     // return this.transformResponse(sanitizedEntity);
     return `${JSON.stringify(ctx.params.slug)}`;
   },
+
   async create(ctx) {
     try {
       ctx.body = await strapi
@@ -48,6 +62,18 @@ module.exports = {
       ctx.throw(500, error);
     }
   },
+
+  async update(ctx) {
+    try {
+      ctx.body = await strapi
+        .plugin("custom-api")
+        .service("customApiServices")
+        .update(ctx.params.id, ctx.request.body);
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
+
   async findContentTypes(ctx) {
     // const { kind } = ctx.query;
 
