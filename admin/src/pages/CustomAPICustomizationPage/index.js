@@ -14,6 +14,25 @@ import upperFirst from "lodash/upperFirst";
 import { TextInput } from "@strapi/design-system/TextInput";
 import customApiRequest from "../../api/custom-api";
 
+function RenderDeeplyNestedObject({ data }) {
+  let { table, fields, populate } = data;
+
+  return (
+    <>
+      <div>{table}</div>
+      <ul>
+        {fields.map((field) => {
+          return <li key={field}>{field}</li>;
+        })}
+
+        {populate && populate.table && (
+          <RenderDeeplyNestedObject data={populate} />
+        )}
+      </ul>
+    </>
+  );
+}
+
 const CustomAPICustomizationPage = ({
   setShowCustomAPICustomizationPage,
   fetchData,
@@ -21,6 +40,40 @@ const CustomAPICustomizationPage = ({
 }) => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+
+  const [contentTypes, setContentTypes] = useState([
+    { uid: "api::author.author", displayName: "Author" },
+    { uid: "api::book.book", displayName: "Book" },
+  ]);
+
+  const [selectedContentType, setSelectedContentType] = useState({
+    uid: "api::author.author",
+    displayName: "Author",
+  });
+
+  const [selectableData, setSelectableData] = useState({
+    populate: {
+      table: "Authors",
+      fields: ["AuthorName", "AuthorAge"],
+      populate: {
+        table: "Books",
+        fields: ["BookTitle"],
+        populate: {
+          table: "Publishers",
+          fields: ["PublisherName"],
+          populate: null,
+        },
+      },
+    },
+  });
+
+  const fetchContentTypeData = async () => {
+    const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
+  };
+
+  useEffect(async () => {
+    fetchContentTypeData();
+  }, []);
 
   const handleSubmit = async (e) => {
     // Prevent submitting parent form
@@ -106,6 +159,11 @@ const CustomAPICustomizationPage = ({
             </Grid>
           </Box>
         </Stack>
+
+        <Box>
+          <div> Rendering the deeply nested data...</div>
+          <RenderDeeplyNestedObject data={selectableData["populate"]} />
+        </Box>
       </ContentLayout>
     </>
   );

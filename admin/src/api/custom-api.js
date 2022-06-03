@@ -13,6 +13,12 @@ const customApiRequest = {
       body: { data: data },
     });
   },
+
+  getAllContentTypes: async () => {
+    return await request("/custom-api/content-types", {
+      method: "GET",
+    });
+  },
 };
 
 export default customApiRequest;

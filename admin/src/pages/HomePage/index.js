@@ -24,7 +24,7 @@ const HomePage = () => {
   const [customAPIData, setCustomAPIData] = useState([]);
 
   const [showCustomAPICustomizationPage, setShowCustomAPICustomizationPage] =
-    useState(false);
+    useState(true);
 
   const fetchData = async () => {
     if (isLoading === false) setIsLoading(true);
