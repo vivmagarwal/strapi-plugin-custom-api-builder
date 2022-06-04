@@ -96,7 +96,6 @@ const CustomAPICustomizationPage = ({
 
     if (editModeData) {
       // edit mode
-      console.log("editmodedata => ", editModeData);
       setName(editModeData.name);
       setSlug(editModeData.slug);
       setSelectedContentType(editModeData.selectedContentType);
@@ -315,8 +314,6 @@ const CustomAPICustomizationPage = ({
 // todo: save the raw data and reuse it
 async function fetchContentTypeData({ uid }) {
   const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
-  console.log("contentTypeDataRaw => ", contentTypeDataRaw);
-
   const selectedContentTypeRaw = contentTypeDataRaw.filter(
     (item) => item.uid === uid
   )[0];
@@ -409,8 +406,6 @@ function FieldsCheckbox({ table, field, toggleSelectedOfField }) {
 // todo: add table check to make it more robust.
 function getNewDataWithToggledSelected(entries, tableName, fieldName) {
   const result = cloneDeepWith(entries, (value) => {
-    console.log("value => ", value);
-
     if (value && value.table) {
       if (value.table === tableName) {
         const fields = [...value.fields];
