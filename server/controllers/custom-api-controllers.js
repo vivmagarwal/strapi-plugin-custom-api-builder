@@ -87,29 +87,14 @@ module.exports = {
 
     iterate(structure[0]["structure"]);
 
-    console.log("-------objHashmap start-------");
-    console.log(objHashmap);
-    console.log("-------objHashmap end-------");
-
     const config = {};
     for (const index in objHashmap) {
       const key = +index;
-      const value = objHashmap[index];
-      const table = value["table"];
-      const fields = objHashmap[index]["fields"]
-        .filter((item) => item.selected)
-        .map((item) => item.name);
-
-      console.log("-----------------");
-      console.log(key);
-      console.log("-----------------");
-      console.log(table);
-      console.log("-----------------");
-      console.log(fields);
-      console.log("-----------------");
 
       if (key === 0) {
-        config["fields"] = fields;
+        config["fields"] = objHashmap[index]["fields"]
+          .filter((item) => item.selected)
+          .map((item) => item.name);
       }
 
       if (key === 1) {
@@ -139,71 +124,8 @@ module.exports = {
       }
     }
 
-    //   if (key === 2) {
-    //     const loc = config
-    //                    ["populate"][objHashmap[1]["table"]];
-
-    //     loc["populate"] = {};
-
-    //     loc["populate"][objHashmap[2]["table"]] = {
-    //       fields: objHashmap[2]["fields"]
-    //         .filter((item) => item.selected)
-    //         .map((item) => item.name),
-    //     };
-    //   }
-
-    //   if (key === 3) {
-    //     const loc = config
-    //                   ["populate"][objHashmap[1]["table"]]
-    //                       ["populate"][objHashmap[2]["table"]];
-
-    //     loc["populate"] = {};
-
-    //     loc["populate"][objHashmap[3]["table"]] = {
-    //       fields: objHashmap[3]["fields"]
-    //         .filter((item) => item.selected)
-    //         .map((item) => item.name),
-    //     };
-    //   }
-    // }
-
-    console.log("-------config starts----------");
-    console.log(config);
-    console.log("-------config ends----------");
-
-    // if (value && value.table) {
-    //   if (value.table === tableName) {
-    //     const fields = [...value.fields];
-    //     const toggledFields = fields.map((item) => {
-    //       if (item.name === fieldName) {
-    //         return { selected: !item.selected, name: item.name };
-    //       } else {
-    //         return item;
-    //       }
-    //     });
-    //     return { ...value, fields: toggledFields };
-    //   }
-    // }
-    // });
-
-    /**
-     * {
-      fields: ["AuthorName", "AuthorAge"],
-      populate: {
-        books: {
-          fields: ["BookTitle"],
-          populate: {
-            publishers: {
-              fields: ["PublisherName"],
-            },
-          },
-        },
-      },
-    }
-     */
-
     const entries = await strapi.entityService.findMany(
-      "api::author.author",
+      structure[0]["selectedContentType"]["uid"],
       config
     );
 
@@ -292,49 +214,5 @@ module.exports = {
         components,
       },
     };
-  },
-
-  async authorReport() {
-    const config = {};
-
-    config["fields"] = null;
-    config["fields"] = [];
-    config["fields"].push("AuthorName");
-    config["fields"].push("AuthorAge");
-    config["populate"] = {};
-
-    config["populate"]["books"] = {};
-    config["populate"]["books"]["fields"] = null;
-    config["populate"]["books"]["fields"] = [];
-    config["populate"]["books"]["fields"].push("BookTitle");
-
-    config["populate"]["books"]["populate"] = {};
-    config["populate"]["books"]["populate"]["publishers"] = {};
-    config["populate"]["books"]["populate"]["publishers"]["fields"] = null;
-    config["populate"]["books"]["populate"]["publishers"]["fields"] = [];
-    config["populate"]["books"]["populate"]["publishers"]["fields"].push(
-      "PublisherName"
-    );
-
-    const entries = await strapi.entityService.findMany(
-      "api::author.author",
-      config
-    );
-
-    // const entries = await strapi.entityService.findMany("api::author.author", {
-    //   fields: ["AuthorName", "AuthorAge"],
-    //   populate: {
-    //     books: {
-    //       fields: ["BookTitle"],
-    //       populate: {
-    //         publishers: {
-    //           fields: ["PublisherName"],
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
-
-    return entries;
   },
 };
