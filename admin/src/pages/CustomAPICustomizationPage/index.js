@@ -34,11 +34,14 @@ const CustomAPICustomizationPage = ({
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
 
-  const [contentTypes, setContentTypes] = useState([
+  /**
+ [
     { uid: "api::author.author", displayName: "Author" },
     { uid: "api::book.book", displayName: "Book" },
     { uid: "api::publisher.publisher", displayName: "Publisher" },
-  ]);
+ ]
+ */
+  const [contentTypes, setContentTypes] = useState(null);
 
   // const [contentTypes, setContentTypes] = useState(async () => {
   //   const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
@@ -49,6 +52,18 @@ const CustomAPICustomizationPage = ({
   //     };
   //   });
   // });
+
+  useEffect(async () => {
+    const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
+    const contentTypeMetadata = contentTypeDataRaw.map((item) => {
+      return {
+        uid: item.uid,
+        displayName: item.info.displayName,
+      };
+    });
+
+    setContentTypes(contentTypeMetadata);
+  }, []);
 
   /**
   {
@@ -253,10 +268,14 @@ const CustomAPICustomizationPage = ({
               disabled={
                 showCustomAPICustomizationPage &&
                 showCustomAPICustomizationPage.id
+                  ? true
+                  : false
               }
               onChange={(val) => {
                 setSelectedContentType(
-                  contentTypes.filter((item) => item.uid === val)[0]
+                  contentTypes &&
+                    contentTypes.length &&
+                    contentTypes.filter((item) => item.uid === val)[0]
                 );
               }}
             >
