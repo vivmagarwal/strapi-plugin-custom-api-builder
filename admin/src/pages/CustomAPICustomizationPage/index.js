@@ -324,12 +324,17 @@ async function getReducedDataObject({
   currentContentTypeRaw,
   iteratedUIDs,
   reducedEntries,
+  currentRelationalField,
 }) {
   let reducedContentData = {};
+  console.log("currentRelationalField => ", currentRelationalField);
+
+  console.log(" currentContentTypeRaw => ", currentContentTypeRaw);
 
   iteratedUIDs.push(currentContentTypeRaw.uid);
 
-  reducedContentData["table"] = currentContentTypeRaw.info.displayName;
+  reducedContentData["table"] =
+    currentRelationalField || currentContentTypeRaw.info.displayName;
 
   if (!reducedContentData["fields"]) reducedContentData["fields"] = [];
 
@@ -353,6 +358,7 @@ async function getReducedDataObject({
           currentContentTypeRaw: selectedContentTypeRaw,
           iteratedUIDs: iteratedUIDs,
           reducedEntries: reducedContentData,
+          currentRelationalField: key,
         });
       }
     }

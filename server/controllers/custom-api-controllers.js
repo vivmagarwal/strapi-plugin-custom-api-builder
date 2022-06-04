@@ -2,6 +2,7 @@
 
 const { contentTypes: contentTypesUtils } = require("@strapi/utils");
 const { has, assoc, mapValues, prop } = require("lodash/fp");
+const cloneDeepWith = require("lodash/cloneDeepWith");
 
 const hasEditMainField = has("edit.mainField");
 const getEditMainField = prop("edit.mainField");
@@ -41,18 +42,172 @@ module.exports = {
     }
   },
 
-  async findBySlug(ctx) {
-    const { id, slug } = ctx.params;
-    const { query } = ctx;
+  async findCustomApiStructureBySlug(ctx) {
+    const { slug } = ctx.params;
 
-    console.log(ctx.params);
-    console.log(ctx.query);
+    if (!slug) ctx.throw(500, new Error("Slug Not found"));
 
-    // const entity = await strapi.service('api::restaurant.restaurant').findOne(id, query);
-    // const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
+    try {
+      return await strapi
+        .plugin("custom-api")
+        .service("customApiServices")
+        .findContentTypeBySlug(slug, ctx.query);
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
 
-    // return this.transformResponse(sanitizedEntity);
-    return `${JSON.stringify(ctx.params.slug)}`;
+  async findCustomAPIDataBySlug(ctx) {
+    const structure = await this.findCustomApiStructureBySlug(ctx);
+
+    if (!structure || !structure.length) {
+      ctx.throw(
+        500,
+        new Error("The structure for this custom-api route is not found.")
+      );
+    }
+
+    const objHashmap = {};
+    const iterate = (obj, i = 0) => {
+      Object.keys(obj).forEach((key) => {
+        if (key === "populate") {
+          objHashmap[i] = obj[key];
+          console.log(i, `key: ${key}, value: ${obj[key]}`);
+        }
+        if (
+          typeof obj[key] === "object" &&
+          obj[key] !== null &&
+          !Array.isArray(obj[key]) &&
+          key === "populate"
+        ) {
+          iterate(obj[key], ++i);
+        }
+      });
+    };
+
+    iterate(structure[0]["structure"]);
+
+    console.log("-------objHashmap start-------");
+    console.log(objHashmap);
+    console.log("-------objHashmap end-------");
+
+    const config = {};
+    for (const index in objHashmap) {
+      const key = +index;
+      const value = objHashmap[index];
+      const table = value["table"];
+      const fields = objHashmap[index]["fields"]
+        .filter((item) => item.selected)
+        .map((item) => item.name);
+
+      console.log("-----------------");
+      console.log(key);
+      console.log("-----------------");
+      console.log(table);
+      console.log("-----------------");
+      console.log(fields);
+      console.log("-----------------");
+
+      if (key === 0) {
+        config["fields"] = fields;
+      }
+
+      if (key === 1) {
+        const loc = config;
+
+        loc["populate"] = {};
+        loc["populate"][objHashmap[1]["table"]] = {
+          fields: objHashmap[1]["fields"]
+            .filter((item) => item.selected)
+            .map((item) => item.name),
+        };
+      }
+
+      if (key > 1) {
+        let loc = config;
+        for (let i = 1; i < key; i++) {
+          loc = loc["populate"][objHashmap[i]["table"]];
+        }
+
+        loc["populate"] = {};
+
+        loc["populate"][objHashmap[key]["table"]] = {
+          fields: objHashmap[key]["fields"]
+            .filter((item) => item.selected)
+            .map((item) => item.name),
+        };
+      }
+    }
+
+    //   if (key === 2) {
+    //     const loc = config
+    //                    ["populate"][objHashmap[1]["table"]];
+
+    //     loc["populate"] = {};
+
+    //     loc["populate"][objHashmap[2]["table"]] = {
+    //       fields: objHashmap[2]["fields"]
+    //         .filter((item) => item.selected)
+    //         .map((item) => item.name),
+    //     };
+    //   }
+
+    //   if (key === 3) {
+    //     const loc = config
+    //                   ["populate"][objHashmap[1]["table"]]
+    //                       ["populate"][objHashmap[2]["table"]];
+
+    //     loc["populate"] = {};
+
+    //     loc["populate"][objHashmap[3]["table"]] = {
+    //       fields: objHashmap[3]["fields"]
+    //         .filter((item) => item.selected)
+    //         .map((item) => item.name),
+    //     };
+    //   }
+    // }
+
+    console.log("-------config starts----------");
+    console.log(config);
+    console.log("-------config ends----------");
+
+    // if (value && value.table) {
+    //   if (value.table === tableName) {
+    //     const fields = [...value.fields];
+    //     const toggledFields = fields.map((item) => {
+    //       if (item.name === fieldName) {
+    //         return { selected: !item.selected, name: item.name };
+    //       } else {
+    //         return item;
+    //       }
+    //     });
+    //     return { ...value, fields: toggledFields };
+    //   }
+    // }
+    // });
+
+    /**
+     * {
+      fields: ["AuthorName", "AuthorAge"],
+      populate: {
+        books: {
+          fields: ["BookTitle"],
+          populate: {
+            publishers: {
+              fields: ["PublisherName"],
+            },
+          },
+        },
+      },
+    }
+     */
+
+    const entries = await strapi.entityService.findMany(
+      "api::author.author",
+      config
+    );
+
+    return entries;
   },
 
   async create(ctx) {

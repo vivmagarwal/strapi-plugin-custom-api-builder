@@ -18,6 +18,15 @@ module.exports = [
     },
   },
   {
+    method: "GET",
+    path: "/find-by-slug/:slug",
+    handler: "customApiControllers.findCustomApiStructureBySlug",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+  {
     method: "POST",
     path: "/create",
     handler: "customApiControllers.create",
@@ -74,7 +83,7 @@ module.exports = [
   {
     method: "GET",
     path: "/:slug",
-    handler: "customApiControllers.findBySlug",
+    handler: "customApiControllers.findCustomAPIDataBySlug",
     config: {
       policies: [],
       auth: false,

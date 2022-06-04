@@ -28,6 +28,15 @@ module.exports = ({ strapi }) => ({
     );
   },
 
+  async findContentTypeBySlug(slug, query) {
+    return await strapi.entityService.findMany(
+      "plugin::custom-api.custom-api",
+      {
+        filters: { slug: slug },
+      }
+    );
+  },
+
   async update(id, data) {
     return await strapi.entityService.update(
       "plugin::custom-api.custom-api",
