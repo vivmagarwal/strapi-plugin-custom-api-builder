@@ -133,9 +133,10 @@ const CustomAPICustomizationPage = ({
     }
   }, [selectedContentType]);
 
-  function toggleSelectedOfField(fieldNameToToggle) {
+  function toggleSelectedOfField(tableName, fieldNameToToggle) {
     const updatedData = getNewDataWithToggledSelected(
       selectableData,
+      tableName,
       fieldNameToToggle
     );
     setSelectableData(updatedData);
@@ -381,21 +382,24 @@ function TablesAccordion({ children, table, ...rest }) {
   );
 }
 
-function FieldsCheckbox({ field, toggleSelectedOfField }) {
+function FieldsCheckbox({ table, field, toggleSelectedOfField }) {
   const [val, setValue] = useState(field.selected);
   return (
     <Box>
       <BaseCheckbox
         aria-label="fields checkbox"
-        name={`base-checkbox-${field.name}`}
-        id={`base-checkbox-${field.name}`}
+        name={`base-checkbox-${table}-${field.name}`}
+        id={`base-checkbox-${table}-${field.name}`}
         onValueChange={(value) => {
           setValue(value);
-          toggleSelectedOfField(field.name);
+          toggleSelectedOfField(table, field.name);
         }}
         value={val}
       />
-      <label style={{ marginLeft: 5 }} htmlFor={`base-checkbox-${field.name}`}>
+      <label
+        style={{ marginLeft: 5 }}
+        htmlFor={`base-checkbox-${table}-${field.name}`}
+      >
         {field.name}
       </label>
     </Box>
@@ -403,11 +407,27 @@ function FieldsCheckbox({ field, toggleSelectedOfField }) {
 }
 
 // todo: add table check to make it more robust.
-function getNewDataWithToggledSelected(entries, fieldName) {
+function getNewDataWithToggledSelected(entries, tableName, fieldName) {
   const result = cloneDeepWith(entries, (value) => {
-    return value && value.name == fieldName
-      ? { ...value, selected: !value.selected }
-      : _.noop();
+    console.log("value => ", value);
+
+    if (value && value.table) {
+      if (value.table === tableName) {
+        const fields = [...value.fields];
+        const toggledFields = fields.map((item) => {
+          if (item.name === fieldName) {
+            return { selected: !item.selected, name: item.name };
+          } else {
+            return item;
+          }
+        });
+        return { ...value, fields: toggledFields };
+      }
+    }
+
+    // return value && value.name == fieldName
+    //   ? { ...value, selected: !value.selected }
+    //   : _.noop();
   });
   return result;
 }
@@ -423,6 +443,7 @@ function RenderDeeplyNestedObject({ data, toggleSelectedOfField }) {
               return (
                 <FieldsCheckbox
                   key={field.name}
+                  table={table}
                   field={field}
                   toggleSelectedOfField={toggleSelectedOfField}
                 />
