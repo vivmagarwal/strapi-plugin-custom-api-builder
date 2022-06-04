@@ -45,6 +45,9 @@ module.exports = {
     const { id, slug } = ctx.params;
     const { query } = ctx;
 
+    console.log(ctx.params);
+    console.log(ctx.query);
+
     // const entity = await strapi.service('api::restaurant.restaurant').findOne(id, query);
     // const sanitizedEntity = await this.sanitizeOutput(entity, ctx);
 

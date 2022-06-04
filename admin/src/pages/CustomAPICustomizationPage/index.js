@@ -50,10 +50,13 @@ const CustomAPICustomizationPage = ({
   //   });
   // });
 
-  const [selectedContentType, setSelectedContentType] = useState({
+  /**
+  {
     uid: "api::author.author",
     displayName: "Author",
-  });
+  }
+   */
+  const [selectedContentType, setSelectedContentType] = useState();
 
   const [selectableData, setSelectableData] = useState({
     populate: {
@@ -62,6 +65,59 @@ const CustomAPICustomizationPage = ({
     },
   });
 
+  // side effects for the edit mode
+  // 1. setting Name
+  // 2. setting slug
+  // 3. setting selected content type
+  // 4. setting the selectable data
+  useEffect(async () => {
+    if (!showCustomAPICustomizationPage || !showCustomAPICustomizationPage.id)
+      return;
+
+    // edit mode
+    const editModeData = await customApiRequest.getCustomApiById(
+      showCustomAPICustomizationPage.id
+    );
+
+    if (editModeData) {
+      // edit mode
+      console.log("editmodedata => ", editModeData);
+      setName(editModeData.name);
+      setSlug(editModeData.slug);
+      setSelectedContentType(editModeData.selectedContentType);
+      setSelectableData(editModeData.structure);
+    }
+  }, []);
+
+  // side effects for the create mode
+  // 1. setting selectableData
+  // 2. name, slug & selectedContentType empty/default state.
+  useEffect(async () => {
+    if (showCustomAPICustomizationPage && showCustomAPICustomizationPage.id)
+      return;
+
+    if (!selectedContentType) return;
+
+    // create mode
+    const selectedContentTypeRaw = await fetchContentTypeData({
+      uid: selectedContentType.uid,
+    });
+
+    if (!selectedContentTypeRaw) return;
+
+    const iteratedUIDs = [];
+    const reducedEntries = {};
+    await getReducedDataObject({
+      currentContentTypeRaw: cloneDeep(selectedContentTypeRaw),
+      iteratedUIDs: iteratedUIDs,
+      reducedEntries: reducedEntries,
+    });
+
+    if (reducedEntries) {
+      setSelectableData(reducedEntries);
+    }
+  }, [selectedContentType]);
+
   function toggleSelectedOfField(fieldNameToToggle) {
     const updatedData = getNewDataWithToggledSelected(
       selectableData,
@@ -69,46 +125,6 @@ const CustomAPICustomizationPage = ({
     );
     setSelectableData(updatedData);
   }
-
-  useEffect(async () => {
-    if (showCustomAPICustomizationPage && showCustomAPICustomizationPage.id) {
-      // edit mode with id
-      const editModeData = await customApiRequest.getCustomApiById(
-        showCustomAPICustomizationPage.id
-      );
-
-      if (editModeData) {
-        // edit mode
-        console.log("editmodedata => ", editModeData);
-        setName(editModeData.name);
-        setSlug(editModeData.slug);
-        setSelectedContentType({
-          uid: "api::author.author",
-          displayName: "Author",
-        });
-        setSelectableData(editModeData.structure);
-      }
-    } else {
-      // create mode
-      const selectedContentTypeRaw = await fetchContentTypeData({
-        uid: selectedContentType.uid,
-      });
-
-      if (!selectedContentTypeRaw) return;
-
-      const iteratedUIDs = [];
-      const reducedEntries = {};
-      await getReducedDataObject({
-        currentContentTypeRaw: cloneDeep(selectedContentTypeRaw),
-        iteratedUIDs: iteratedUIDs,
-        reducedEntries: reducedEntries,
-      });
-
-      if (reducedEntries) {
-        setSelectableData(reducedEntries);
-      }
-    }
-  }, []);
 
   const handleSubmit = async (e) => {
     // Prevent submitting parent form
@@ -222,7 +238,8 @@ const CustomAPICustomizationPage = ({
         >
           <Stack spacing={11}>
             <Typography variant="beta">
-              The selected Content Type is: {selectedContentType.displayName}
+              The selected Content Type is:{" "}
+              {selectedContentType ? selectedContentType.displayName : ""}
             </Typography>
             <Select
               id="select1"
@@ -232,7 +249,11 @@ const CustomAPICustomizationPage = ({
               hint="Relationships will automatically be mapped below"
               onClear={() => setSelectedContentType(undefined)}
               clearLabel="Clear content types"
-              value={selectedContentType.uid}
+              value={selectedContentType ? selectedContentType.uid : null}
+              disabled={
+                showCustomAPICustomizationPage &&
+                showCustomAPICustomizationPage.id
+              }
               onChange={(val) => {
                 setSelectedContentType(
                   contentTypes.filter((item) => item.uid === val)[0]
