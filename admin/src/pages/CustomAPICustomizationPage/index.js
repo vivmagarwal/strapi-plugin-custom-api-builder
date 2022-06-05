@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "@strapi/helper-plugin";
-import Plus from "@strapi/icons/Plus";
 import ArrowLeft from "@strapi/icons/ArrowLeft";
 import Check from "@strapi/icons/Check";
-import Pencil from "@strapi/icons/Pencil";
 import { Button } from "@strapi/design-system/Button";
-import { Flex } from "@strapi/design-system/Flex";
 import { Stack } from "@strapi/design-system/Stack";
 import { Box } from "@strapi/design-system/Box";
 import { Grid, GridItem } from "@strapi/design-system/Grid";
@@ -21,7 +17,6 @@ import {
   Accordion,
   AccordionToggle,
   AccordionContent,
-  AccordionGroup,
 } from "@strapi/design-system/Accordion";
 import { BaseCheckbox } from "@strapi/design-system/BaseCheckbox";
 
@@ -42,16 +37,6 @@ const CustomAPICustomizationPage = ({
  ]
  */
   const [contentTypes, setContentTypes] = useState(null);
-
-  // const [contentTypes, setContentTypes] = useState(async () => {
-  //   const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
-  //   return contentTypeDataRaw.map((item) => {
-  //     return {
-  //       uid: item.uid,
-  //       displayName: item.info.displayName,
-  //     };
-  //   });
-  // });
 
   useEffect(async () => {
     const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
@@ -230,10 +215,10 @@ const CustomAPICustomizationPage = ({
 
               <GridItem col={6} s={12}>
                 <TextInput
-                  placeholder="A Slug for urls"
+                  placeholder="A Slug for constructing URL"
                   label="Slug"
                   name="slug"
-                  hint="A valid string that can be appended to URLs"
+                  hint={slug && `Get your data here: /custom-api/${slug}`}
                   onChange={(e) => setSlug(e.target.value)}
                   value={slug}
                 />
@@ -327,9 +312,6 @@ async function getReducedDataObject({
   currentRelationalField,
 }) {
   let reducedContentData = {};
-  console.log("currentRelationalField => ", currentRelationalField);
-
-  console.log(" currentContentTypeRaw => ", currentContentTypeRaw);
 
   iteratedUIDs.push(currentContentTypeRaw.uid);
 
@@ -341,7 +323,7 @@ async function getReducedDataObject({
   for (const key of Object.keys(currentContentTypeRaw.attributes)) {
     if (currentContentTypeRaw.attributes[key].type !== "relation") {
       reducedContentData["fields"].push({
-        selected: false,
+        selected: key === "id" ? true : false,
         name: key,
       });
     }
@@ -387,6 +369,7 @@ function TablesAccordion({ children, table, ...rest }) {
 
 function FieldsCheckbox({ table, field, toggleSelectedOfField }) {
   const [val, setValue] = useState(field.selected);
+
   return (
     <Box>
       <BaseCheckbox
@@ -398,6 +381,7 @@ function FieldsCheckbox({ table, field, toggleSelectedOfField }) {
           toggleSelectedOfField(table, field.name);
         }}
         value={val}
+        disabled={field.name === "id"}
       />
       <label
         style={{ marginLeft: 5 }}

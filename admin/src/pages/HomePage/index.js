@@ -14,7 +14,6 @@ import Plus from "@strapi/icons/Plus";
 import { Stack } from "@strapi/design-system/Stack";
 import upperFirst from "lodash/upperFirst";
 import { Illo } from "../../components/Illo";
-import CustomAPICount from "../../components/CustomAPICount";
 import CustomAPITable from "../../components/CustomAPITable";
 import CustomAPICustomizationPage from "../CustomAPICustomizationPage";
 import customApiRequest from "../../api/custom-api";
