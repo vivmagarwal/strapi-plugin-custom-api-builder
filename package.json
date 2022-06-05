@@ -1,20 +1,29 @@
 {
-  "name": "custom-api",
-  "version": "0.0.0",
-  "description": "This is the description of the plugin.",
+  "name": "strapi-plugin-custom-api",
+  "version": "1.0.0",
+  "description": "Create custom API's from within the Admin dashboard of Strapi.",
   "strapi": {
     "name": "custom-api",
-    "description": "Description of Custom Api Builder plugin",
+    "description": "Create custom API's from within the Admin dashboard of Strapi.",
     "kind": "plugin",
     "displayName": "Custom Api Builder"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vivmagarwal/strapi-plugin-custom-api-builder"
+  },
   "dependencies": {},
+  "peerDependencies": {
+    "@strapi/strapi": "4.x.x"
+  },
   "author": {
-    "name": "Vivek M. Agarwal"
+    "name": "Vivek M. Agarwal",
+    "email": "vivmagarwal@gmail.com"
   },
   "maintainers": [
     {
-      "name": "Vivek M. Agarwal"
+      "name": "Vivek M. Agarwal",
+      "email": "vivmagarwal@gmail.com"
     }
   ],
   "engines": {
