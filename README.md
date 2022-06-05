@@ -75,3 +75,5 @@ The **Custom API Builder** plugin should appear in the **Plugins** section of St
 https://user-images.githubusercontent.com/34507994/172044022-7dce9138-d716-4806-a765-b446f24a94dd.mp4
 
 As simple as that
+
+#StrapiPluginWeek
