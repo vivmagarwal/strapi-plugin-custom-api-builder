@@ -35,6 +35,19 @@ yarn add strapi-plugin-custom-api@latest
 npm i -S strapi-plugin-custom-api@latest
 ```
 
+Add the following config to `/config/plugins.js` file
+```
+module.exports = {
+  "custom-api": {
+    enabled: true,
+    resolve: "./src/plugins/custom-api",
+  },
+};
+
+```
+In case you don't have a plugins.js file, please create one.
+
+
 After successful installation you've to build a fresh package that includes plugin UI. To archive that simply use:
 
 ```bash
@@ -61,3 +74,4 @@ The **Custom API Builder** plugin should appear in the **Plugins** section of St
 
 https://user-images.githubusercontent.com/34507994/172044022-7dce9138-d716-4806-a765-b446f24a94dd.mp4
 
+As simple as that
