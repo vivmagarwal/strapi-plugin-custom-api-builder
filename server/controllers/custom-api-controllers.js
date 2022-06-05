@@ -18,6 +18,7 @@ const getService = (name) => {
   return strapi.plugin("content-manager").service(name);
 };
 
+// @todo: refactoring - move all complex logic to services
 module.exports = {
   async find(ctx) {
     try {
