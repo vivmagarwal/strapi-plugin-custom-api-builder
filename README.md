@@ -1,8 +1,9 @@
 # Strapi Custom API Builder plugin
 
 Design your custom API's (or custom reports / or custom views) directly from the [Strapi CMS](https://github.com/strapi/strapi) admin panel. Simply select the fields you need to show, enter a valid slug and let the plugin magically create the routes, controllers & services for you. Very easy to create & even easier to maintain.
+&nbsp;
 
-<img width="955" alt="custom-api-builder-ss-2" src="https://user-images.githubusercontent.com/34507994/172045904-9ee9eaf3-b926-4561-b8fc-7cca50e8722b.png">
+![custom-api-builder-ss-3](https://user-images.githubusercontent.com/34507994/172046114-2cc9bf30-b2f1-4bec-9a60-b6a3117c61bc.png)
 
 &nbsp;
 ## ⚙️ Versions
