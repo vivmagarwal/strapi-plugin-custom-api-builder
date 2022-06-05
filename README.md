@@ -9,6 +9,26 @@ Design your custom API's (or custom reports / or custom views) directly from the
 
 &nbsp;
 
+## 🖐 Beta Release
+
+We are still performing tests to make sure that the plugin is bug free. We will be adding several more features to the plugin in the recent future. 
+
+## 🚧 Roadmap
+
+- [x] Build an API Visually from the Admin UI
+- [x] Auto compose Routes, Controllers and Services
+- [ ] Complete UI tests
+- [ ] Use built in slug system to auto generate slugs and validate if they are unique
+- [ ] Add filtering capabilities
+- [ ] Add ordering/sorting capabilities
+- [ ] Add pagination capabilities
+- [ ] Robust way to handle both multi / single value
+- [ ] Manage multiple relations
+- [ ] Improve UI for scalability
+- [ ] When we have a field in the builder and its deleted from the content-type, handle it in a graceful way
+- [ ] Provide a way to visualise the constructed query
+
+
 ## ⏳ Installation
 
 Install Strapi with this **Quickstart** command to create a Strapi project instantly:
