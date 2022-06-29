@@ -63,7 +63,6 @@ Add the following config to `/config/plugins.js` file
 module.exports = {
   "custom-api": {
     enabled: true,
-    resolve: "./src/plugins/custom-api",
   },
 };
 
