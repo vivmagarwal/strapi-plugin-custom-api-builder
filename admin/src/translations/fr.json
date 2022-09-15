@@ -1,1 +1,5 @@
-{}
+{
+  "plugin.description.long": "Concevez vos API personnalisées (ou rapports / ou vues personnalisés) directement à partir du panneau d'administration strapi CMS. Sélectionnez simplement les champs que vous devez afficher, entrez une limace valide et laissez le plugin créer comme par magie les itinéraires, les contrôleurs et les services pour vous. Très facile à créer et encore plus facile à entretenir.",
+  "plugin.description.short": "Concevez vos API personnalisées directement à partir du panneau d'administration strapi CMS.",
+  "plugin.name": "API Personnalisée"
+}

@@ -1,1 +1,5 @@
-{}
+{
+  "plugin.description.long": "Design your custom API's (or custom reports / or custom views) directly from the Strapi CMS admin panel. Simply select the fields you need to show, enter a valid slug and let the plugin magically create the routes, controllers & services for you. Very easy to create & even easier to maintain.",
+  "plugin.description.short": "Design your custom API's directly from the Strapi CMS admin panel.",
+  "plugin.name": "Custom API"
+}
