@@ -16,9 +16,11 @@ import { IconButton } from "@strapi/design-system/IconButton";
 import { VisuallyHidden } from "@strapi/design-system/VisuallyHidden";
 import { BaseCheckbox } from "@strapi/design-system/BaseCheckbox";
 import { TextInput } from "@strapi/design-system/TextInput";
+import Show from '@strapi/icons/Eye';
 import Pencil from "@strapi/icons/Pencil";
 import Trash from "@strapi/icons/Trash";
 import Plus from "@strapi/icons/Plus";
+import openWithNewTab from '../../utils/openWithNewTab';
 
 function CustomAPICheckbox({ value, checkboxID, callback, disabled }) {
   const [isChecked, setIsChecked] = useState(value);
@@ -107,7 +109,7 @@ export default function CustomAPITable({
 
                 <Td>
                   <Typography textColor="neutral800">
-                    {customAPI.name}
+                      {customAPI.name}
                   </Typography>
                 </Td>
 
@@ -119,6 +121,15 @@ export default function CustomAPITable({
 
                 <Td>
                   <Flex style={{ justifyContent: "end" }}>
+                    <IconButton onClick={(e) => {
+                        e.preventDefault();
+                        openWithNewTab(`/custom-api/${customAPI.slug}`);
+                      }}
+                      noBorder
+                      icon={<Show />}
+                      label={'Open target'}
+                    />
+
                     <IconButton
                       onClick={() => editCustomAPI(customAPI.id)}
                       label="Edit"
