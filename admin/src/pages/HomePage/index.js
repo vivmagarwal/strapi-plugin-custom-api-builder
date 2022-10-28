@@ -21,6 +21,7 @@ import customApiRequest from "../../api/custom-api";
 const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [customAPIData, setCustomAPIData] = useState([]);
+  const [contentTypeCount, setContentTypeCount] = useState(0);
 
   const [showCustomAPICustomizationPage, setShowCustomAPICustomizationPage] =
     useState(false);
@@ -29,6 +30,10 @@ const HomePage = () => {
     if (isLoading === false) setIsLoading(true);
     const customApiData = await customApiRequest.getAllCustomApis();
     setCustomAPIData(customApiData);
+
+    const contentTypeData = await customApiRequest.getAllContentTypes();
+    setContentTypeCount(contentTypeData.length);
+
     setIsLoading(false);
   };
 
@@ -60,19 +65,28 @@ const HomePage = () => {
 
       <ContentLayout>
         {customAPIData.length === 0 && !showCustomAPICustomizationPage && (
-          <EmptyStateLayout
-            icon={<Illo />}
-            content="You don't have any Custom API yet..."
-            action={
-              <Button
-                onClick={() => setShowCustomAPICustomizationPage({ id: null })}
-                variant="secondary"
-                startIcon={<Plus />}
-              >
-                Add your first Custom API
-              </Button>
-            }
-          />
+          <div>
+            <EmptyStateLayout
+              icon={<Illo />}
+              content={
+                !!!contentTypeCount
+                  ? "You require at least 1 collection type to proceed, Content-Type builder -> Create new collection type"
+                  : "You don't have any custom API yet"
+              }
+              action={
+                <Button
+                  onClick={() =>
+                    setShowCustomAPICustomizationPage({ id: null })
+                  }
+                  variant="secondary"
+                  startIcon={<Plus />}
+                  disabled={!!!contentTypeCount}
+                >
+                  Add your first Custom API
+                </Button>
+              }
+            />
+          </div>
         )}
 
         {customAPIData.length > 0 && !showCustomAPICustomizationPage && (
