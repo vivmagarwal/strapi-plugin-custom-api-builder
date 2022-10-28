@@ -90,8 +90,8 @@ yarn develop --watch-admin
 npm run develop --watch-admin
 ```
 
-## Installation of plugin from scratch
-<div style="position: relative; padding-bottom: 56.518082422203534%; height: 0;"><iframe src="https://www.loom.com/embed/6ed4576bf2d645f5b7f45b7928c74def" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+## Step by step installation of the plugin from scratch
+https://www.loom.com/share/6ed4576bf2d645f5b7f45b7928c74def
 
 
 The **Custom API Builder** plugin should appear in the **Plugins** section of Strapi sidebar after you run app again.
