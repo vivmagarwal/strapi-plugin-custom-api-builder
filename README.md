@@ -12,6 +12,11 @@ Design your custom API's (or custom reports / or custom views) directly from the
 
 &nbsp;
 
+## Breaking changes in v1
+- Support for media & multiple media added
+- Support for multiple relationships at the same level added
+- The above features makes it incompatible with v0.x. The current version wont work with the custom API's created with v0.x.
+
 ## 🖐 Beta Release
 
 We are still performing tests to make sure that the plugin is bug free. We will be adding several more features to the plugin in the recent future. 
@@ -26,9 +31,12 @@ We are still performing tests to make sure that the plugin is bug free. We will 
 - [ ] Add ordering/sorting capabilities
 - [ ] Add pagination capabilities
 - [ ] Robust way to handle both multi / single value
-- [ ] Manage multiple relations
+- [x] Manage multiple relations
+- [x] Support Media & Multiple Media
+- [x] Disable if no content types
 - [ ] Improve UI for scalability
 - [ ] When we have a field in the builder and its deleted from the content-type, handle it in a graceful way
+- [ ] When we have a new field, show it in the builder while editing
 - [ ] Provide a way to visualise the constructed query
 
 
