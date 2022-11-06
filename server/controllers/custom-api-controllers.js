@@ -3,6 +3,7 @@
 const { contentTypes: contentTypesUtils } = require("@strapi/utils");
 const { has, assoc, mapValues, prop } = require("lodash/fp");
 const cloneDeepWith = require("lodash/cloneDeepWith");
+const { getConfigObject, getTrimmedStructure } = require("../utils");
 
 const hasEditMainField = has("edit.mainField");
 const getEditMainField = prop("edit.mainField");
@@ -68,62 +69,17 @@ module.exports = {
       );
     }
 
-    const objHashmap = {};
-    const iterate = (obj, i = 0) => {
-      Object.keys(obj).forEach((key) => {
-        if (key === "populate") {
-          objHashmap[i] = obj[key];
-          console.log(i, `key: ${key}, value: ${obj[key]}`);
-        }
-        if (
-          typeof obj[key] === "object" &&
-          obj[key] !== null &&
-          !Array.isArray(obj[key]) &&
-          key === "populate"
-        ) {
-          iterate(obj[key], ++i);
-        }
-      });
-    };
+    let trimmedStructure = getTrimmedStructure(structure);
 
-    iterate(structure[0]["structure"]);
+    // console.log(
+    //   "trimmedStructure *** ",
+    //   JSON.stringify(trimmedStructure, null, 2)
+    // );
 
-    const config = {};
-    for (const index in objHashmap) {
-      const key = +index;
+    let config = getConfigObject(trimmedStructure);
 
-      if (key === 0) {
-        config["fields"] = objHashmap[index]["fields"]
-          .filter((item) => item.selected)
-          .map((item) => item.name);
-      }
-
-      if (key === 1) {
-        const loc = config;
-
-        loc["populate"] = {};
-        loc["populate"][objHashmap[1]["table"]] = {
-          fields: objHashmap[1]["fields"]
-            .filter((item) => item.selected)
-            .map((item) => item.name),
-        };
-      }
-
-      if (key > 1) {
-        let loc = config;
-        for (let i = 1; i < key; i++) {
-          loc = loc["populate"][objHashmap[i]["table"]];
-        }
-
-        loc["populate"] = {};
-
-        loc["populate"][objHashmap[key]["table"]] = {
-          fields: objHashmap[key]["fields"]
-            .filter((item) => item.selected)
-            .map((item) => item.name),
-        };
-      }
-    }
+    // @todo: Provide a way to show this config in the UI to the site builders
+    // console.log("config *** ", JSON.stringify(config, null, 2));
 
     const entries = await strapi.entityService.findMany(
       structure[0]["selectedContentType"]["uid"],
@@ -215,5 +171,51 @@ module.exports = {
         components,
       },
     };
+  },
+
+  // /custom-api/test-em-out-do-not-use
+  // for testing purpose at the time of development only.
+  async testEmOutDoNotUse(ctx) {
+    let configAllAuthors = {
+      fields: ["id", "AuthorName", "createdAt"],
+      populate: {
+        books: {
+          fields: ["id", "BookName", "createdAt"],
+        },
+      },
+    };
+
+    let configAuthorsWithImage = {
+      fields: ["id", "AuthorName"],
+      populate: {
+        AuthorImage: {},
+      },
+    };
+
+    try {
+      // fetching data
+      const entries = await strapi.entityService.findMany(
+        "api::author.author",
+        {
+          fields: ["id", "AuthorName"],
+          populate: {
+            hobbies: {
+              fields: ["HobbyName"],
+            },
+            books: {
+              fields: ["BookName"],
+              populate: {
+                book_categories: {
+                  fields: ["BookCategoryName"],
+                },
+              },
+            },
+          },
+        }
+      );
+      return entries;
+    } catch (err) {
+      return err;
+    }
   },
 };

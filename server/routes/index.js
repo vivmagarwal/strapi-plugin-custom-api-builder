@@ -71,6 +71,17 @@ module.exports = [
       auth: false,
     },
   },
+
+  {
+    method: "GET",
+    path: "/test-em-out-do-not-use",
+    handler: "customApiControllers.testEmOutDoNotUse",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+
   {
     method: "GET",
     path: "/:slug",
