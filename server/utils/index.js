@@ -1,67 +1,67 @@
 const cloneDeepWith = require("lodash/cloneDeepWith");
 
 /**
- * Takes in the structure of custom api as stored in the database
- * trims the unselected fields and returns the trimmed version of structure
+ * Filters out unselected fields from the given structure.
+ * @param {Object} structure - The original structure.
+ * @returns {Object} - The trimmed structure with only selected fields.
  */
 function getTrimmedStructure(structure) {
-  let trimmed = cloneDeepWith(structure, (value, key) => {
+  return cloneDeepWith(structure, (value, key) => {
     if (key === "fields") {
-      return value.filter((item) => {
-        return item.selected;
-      });
+      return value.filter(item => item.selected);
     }
   });
-
-  return trimmed;
 }
 
 /**
- * Takes in a trimmed structure of the custom api as stored in the database
- * returns back a config object that can be used as it is by strapi.entityService.findMany
+ * Recursively reduces the populate values of the given value array.
+ * @param {Array} value - The value array to reduce.
+ * @returns {Object} - The reduced object.
  */
-function getConfigObject(trimmedStructure) {
-  // helper function to recursively reduce the populate values.
+function populateReducer(value) {
+  const reducedObject = {};
 
-  function populateReducer(value) {
-    return value.reduce((acc, item) => {
-      acc[item.table] = {};
+  for (const item of value) {
+    reducedObject[item.table] = {};
 
-      if (item.fields) {
-        acc[item.table]["fields"] = item.fields.reduce((acc, item) => {
-          acc.push(item.name);
-          return acc;
-        }, []);
+    if (item.fields) {
+      reducedObject[item.table].fields = item.fields.map(field => field.name);
+    }
+
+    if (item.populate) {
+      reducedObject[item.table].populate = populateReducer(item.populate);
+    }
+
+    if (item.media) {
+      for (const media of item.media) {
+        if (!reducedObject[item.table].populate) {
+          reducedObject[item.table].populate = {};
+        }
+        reducedObject[item.table].populate[media.name] = {};
       }
-
-      if (item.populate) {
-        acc[item.table]["populate"] = populateReducer(item.populate);
-      }
-
-      if (item.media) {
-        item.media.forEach((m) => {
-          acc[item.table]["populate"][m.name] = {};
-        });
-      }
-
-      return acc;
-    }, {});
+    }
   }
 
-  let populatedFixed = cloneDeepWith(trimmedStructure, (value, key) => {
+  return reducedObject;
+}
+
+/**
+ * Creates a configuration object from the given trimmed structure.
+ * @param {Object} trimmedStructure - The trimmed structure.
+ * @returns {Object} - The configuration object.
+ */
+function getConfigObject(trimmedStructure) {
+  const populatedFixed = cloneDeepWith(trimmedStructure, (value, key) => {
     if (key === "populate") {
       return populateReducer(value);
     }
 
     if (key === "fields") {
-      return value.reduce((acc, item) => {
-        acc.push(item.name);
-        return acc;
-      }, []);
+      return value.map(item => item.name);
     }
   });
 
-  const selectedContentType = populatedFixed[0].selectedContentType.displayName;
+  const selectedContentType = trimmedStructure[0].selectedContentType.displayName;
   const config = populatedFixed[0].structure.populate[selectedContentType];
 
   return config;
