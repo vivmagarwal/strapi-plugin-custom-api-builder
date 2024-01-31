@@ -37,7 +37,7 @@ const HomePage = () => {
     setIsLoading(false);
   };
 
-  useEffect(async () => {
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -110,9 +110,8 @@ const HomePage = () => {
               title={upperFirst(
                 `custom  API${customAPIData.length > 1 ? "s" : ""}`
               )}
-              subtitle={`${customAPIData.length} ${
-                customAPIData.length > 1 ? "entries" : "entry"
-              } found`}
+              subtitle={`${customAPIData.length} ${customAPIData.length > 1 ? "entries" : "entry"
+                } found`}
             />
             <ContentLayout>
               <CustomAPITable

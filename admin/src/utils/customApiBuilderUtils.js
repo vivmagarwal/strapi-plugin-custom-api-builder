@@ -47,12 +47,16 @@ async function getReducedDataObject({
           uid: relationalUid,
         });
 
-        await getReducedDataObject({
-          currentContentTypeRaw: selectedContentTypeRaw,
-          iteratedUIDs: iteratedUIDs,
-          reducedEntries: reducedContentData,
-          currentRelationalField: key,
-        });
+        if (!selectedContentTypeRaw) {
+          console.log(`Could fetch content type data for ${relationalUid}`);
+        } else {
+          await getReducedDataObject({
+            currentContentTypeRaw: selectedContentTypeRaw,
+            iteratedUIDs: iteratedUIDs,
+            reducedEntries: reducedContentData,
+            currentRelationalField: key,
+          });
+        }
       }
     }
 

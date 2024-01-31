@@ -41,16 +41,18 @@ const CustomAPICustomizationPage = ({
  */
   const [contentTypes, setContentTypes] = useState(null);
 
-  useEffect(async () => {
-    const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
-    const contentTypeMetadata = contentTypeDataRaw.map((item) => {
-      return {
-        uid: item.uid,
-        displayName: item.info.displayName,
-      };
-    });
+  useEffect(() => {
+    (async () => {
+      const contentTypeDataRaw = await customApiRequest.getAllContentTypes();
+      const contentTypeMetadata = contentTypeDataRaw.map((item) => {
+        return {
+          uid: item.uid,
+          displayName: item.info.displayName,
+        };
+      });
 
-    setContentTypes(contentTypeMetadata);
+      setContentTypes(contentTypeMetadata);
+    })()
   }, []);
 
   /**
@@ -70,52 +72,58 @@ const CustomAPICustomizationPage = ({
   // 2. setting slug
   // 3. setting selected content type
   // 4. setting the selectable data
-  useEffect(async () => {
-    if (!showCustomAPICustomizationPage || !showCustomAPICustomizationPage.id)
-      return;
+  useEffect(() => {
+    (async () => {
+      if (!showCustomAPICustomizationPage || !showCustomAPICustomizationPage.id)
+        return;
 
-    // edit mode
-    const editModeData = await customApiRequest.getCustomApiById(
-      showCustomAPICustomizationPage.id
-    );
-
-    if (editModeData) {
       // edit mode
-      setName(editModeData.name);
-      setSlug(editModeData.slug);
-      setSelectedContentType(editModeData.selectedContentType);
-      setSelectableData(editModeData.structure);
-    }
+      const editModeData = await customApiRequest.getCustomApiById(
+        showCustomAPICustomizationPage.id
+      );
+
+      if (editModeData) {
+        // edit mode
+        setName(editModeData.name);
+        setSlug(editModeData.slug);
+        setSelectedContentType(editModeData.selectedContentType);
+        setSelectableData(editModeData.structure);
+      }
+    })()
   }, []);
 
   // side effects for the create mode
   // 1. setting selectableData
   // 2. name, slug & selectedContentType empty/default state.
-  useEffect(async () => {
-    if (showCustomAPICustomizationPage && showCustomAPICustomizationPage.id)
-      return;
+  useEffect(() => {
+    (async () => {
+      if (showCustomAPICustomizationPage && showCustomAPICustomizationPage.id)
+        return;
 
-    if (!selectedContentType) return;
+      if (!selectedContentType) return;
 
-    // create mode
-    const selectedContentTypeRaw = await fetchContentTypeData({
-      uid: selectedContentType.uid,
-    });
+      // create mode
+      const selectedContentTypeRaw = await fetchContentTypeData({
+        uid: selectedContentType.uid,
+      });
 
-    if (!selectedContentTypeRaw) return;
+      if (!selectedContentTypeRaw) return;
 
-    const iteratedUIDs = [];
-    const reducedEntries = {};
+      const iteratedUIDs = [];
+      const reducedEntries = {};
 
-    await getReducedDataObject({
-      currentContentTypeRaw: cloneDeep(selectedContentTypeRaw),
-      iteratedUIDs: iteratedUIDs,
-      reducedEntries: reducedEntries,
-    });
+      console.log(selectedContentTypeRaw);
 
-    if (reducedEntries) {
-      setSelectableData(reducedEntries);
-    }
+      await getReducedDataObject({
+        currentContentTypeRaw: cloneDeep(selectedContentTypeRaw),
+        iteratedUIDs: iteratedUIDs,
+        reducedEntries: reducedEntries,
+      });
+
+      if (reducedEntries) {
+        setSelectableData(reducedEntries);
+      }
+    })()
   }, [selectedContentType]);
 
   function getNewFieldDataWithToggledSelected(entries, tableName, fieldName) {
@@ -300,15 +308,15 @@ const CustomAPICustomizationPage = ({
               value={selectedContentType ? selectedContentType.uid : null}
               disabled={
                 showCustomAPICustomizationPage &&
-                showCustomAPICustomizationPage.id
+                  showCustomAPICustomizationPage.id
                   ? true
                   : false
               }
               onChange={(val) => {
                 setSelectedContentType(
                   contentTypes &&
-                    contentTypes.length &&
-                    contentTypes.filter((item) => item.uid === val)[0]
+                  contentTypes.length &&
+                  contentTypes.filter((item) => item.uid === val)[0]
                 );
               }}
             >
