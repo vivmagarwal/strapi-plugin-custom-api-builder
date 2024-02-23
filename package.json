@@ -26,10 +26,6 @@
       "email": "vivmagarwal@gmail.com"
     }
   ],
-  "engines": {
-    "node": ">=12.x.x",
-    "npm": ">=6.0.0"
-  },
   "bugs": {
     "url": "https://github.com/vivmagarwal/strapi-plugin-custom-api-builder/issues"
   },
