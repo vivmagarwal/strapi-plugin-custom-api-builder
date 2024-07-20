@@ -59,35 +59,47 @@ module.exports = {
     }
   },
 
-  async findCustomAPIDataBySlug(ctx) {
-    const structure = await this.findCustomApiStructureBySlug(ctx);
 
-    if (!structure || !structure.length) {
-      ctx.throw(
-        500,
-        new Error("The structure for this custom-api route is not found.")
-      );
+  async findCustomAPIDataBySlug(ctx) {
+    const { slug } = ctx.params;
+
+    if (!slug) {
+      ctx.throw(400, "Slug is required");
+      return;
     }
 
-    let trimmedStructure = getTrimmedStructure(structure);
+    try {
+      const structure = await strapi
+        .plugin("custom-api")
+        .service("customApiServices")
+        .findContentTypeBySlug(slug);
 
-    // console.log(
-    //   "trimmedStructure *** ",
-    //   JSON.stringify(trimmedStructure, null, 2)
-    // );
+      console.log(`[findCustomAPIDataBySlug] Structure for slug ${slug}:`, JSON.stringify(structure, null, 2));
 
-    let config = getConfigObject(trimmedStructure);
+      if (!structure || !structure.length) {
+        ctx.throw(404, "Structure not found for the given slug");
+        return;
+      }
 
-    // @todo: Provide a way to show this config in the UI to the site builders
-    // console.log("config *** ", JSON.stringify(config, null, 2));
+      const trimmedStructure = getTrimmedStructure(structure);
 
-    const entries = await strapi.entityService.findMany(
-      structure[0]["selectedContentType"]["uid"],
-      config
-    );
+      const config = getConfigObject(trimmedStructure);
 
-    return entries;
+      console.log(`[findCustomAPIDataBySlug] Generated query config:`, JSON.stringify(config, null, 2));
+
+      const entries = await strapi.entityService.findMany(
+        structure[0].selectedContentType.uid,
+        config
+      );
+
+      // console.log(`[findCustomAPIDataBySlug] Fetched entries:`, JSON.stringify(entries, null, 2));
+      ctx.send(entries);
+    } catch (error) {
+      console.error(`[findCustomAPIDataBySlug] Error fetching data for slug ${slug}:`, error);
+      ctx.throw(500, `Failed to fetch data for slug ${slug}: ${error.message}`);
+    }
   },
+
 
   async create(ctx) {
     try {
@@ -192,27 +204,66 @@ module.exports = {
       },
     };
 
-    try {
-      // fetching data
-      const entries = await strapi.entityService.findMany(
-        "api::author.author",
-        {
-          fields: ["id", "AuthorName"],
-          populate: {
-            hobbies: {
-              fields: ["HobbyName"],
+    let configWithDynamicZones = {
+        fields: ['id', 'book_name', 'createdAt', 'updatedAt'],
+        populate: {
+          book_image: {},
+          authors: {
+            fields: ['id', 'author_name', 'createdAt', 'updatedAt'],
+          },
+          Component_1: {
+            populate: {
+              another_media: {},
             },
-            books: {
-              fields: ["BookName"],
-              populate: {
-                book_categories: {
-                  fields: ["BookCategoryName"],
-                },
+          },
+          dynamic_zone_1: {
+            populate: {
+              component_1: {
+                fields: ['id', 'component_1', 'another_media'],
               },
             },
           },
-        }
-      );
+        },
+      };
+
+let config = {
+  "fields": [],
+  "populate": {
+    "authors": {
+      "fields": [
+        "id",
+        "author_name",
+        "createdAt"
+      ]
+    },
+    "book_image": {}
+  }
+}
+
+    try {
+      // fetching data
+      // const entries = await strapi.entityService.findMany(
+      //   "api::author.author",
+      //   {
+      //     fields: ["id", "AuthorName"],
+      //     populate: {
+      //       hobbies: {
+      //         fields: ["HobbyName"],
+      //       },
+      //       books: {
+      //         fields: ["BookName"],
+      //         populate: {
+      //           book_categories: {
+      //             fields: ["BookCategoryName"],
+      //           },
+      //         },
+      //       },
+      //     },
+      //   }
+      // );
+
+      const entries = await strapi.entityService.findMany('api::book.book', config);
+
       return entries;
     } catch (err) {
       return err;
