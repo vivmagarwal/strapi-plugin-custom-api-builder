@@ -1,37 +1,21 @@
 import { request } from "@strapi/helper-plugin";
 
 const customApiRequest = {
-  getAllCustomApis: async () => {
-    return await request("/custom-api/find", {
-      method: "GET",
-    });
-  },
+  getAllCustomApis: () => request("/custom-api/find", { method: "GET" }),
 
-  getCustomApiById: async (id) => {
-    return await request(`/custom-api/find/${id}`, {
-      method: "GET",
-    });
-  },
+  getCustomApiById: (id) => request(`/custom-api/find/${id}`, { method: "GET" }),
 
-  addCustomApi: async (data) => {
-    return await request("/custom-api/create", {
-      method: "POST",
-      body: { data: data },
-    });
-  },
+  addCustomApi: (data) => request("/custom-api/create", {
+    method: "POST",
+    body: { data },
+  }),
 
-  updateCustomApi: async (id, data) => {
-    return await request(`/custom-api/update/${id}`, {
-      method: "PUT",
-      body: { data: data },
-    });
-  },
+  updateCustomApi: (id, data) => request(`/custom-api/update/${id}`, {
+    method: "PUT",
+    body: { data },
+  }),
 
-  getAllContentTypes: async () => {
-    return await request("/custom-api/content-types", {
-      method: "GET",
-    });
-  },
+  getAllContentTypes: () => request("/custom-api/content-types", { method: "GET" }),
 };
 
 export default customApiRequest;

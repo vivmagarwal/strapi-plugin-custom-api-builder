@@ -17,11 +17,7 @@ import {
   fetchContentTypeData,
   getReducedDataObject,
 } from "../../utils/customApiBuilderUtils";
-import {
-  RenderDeeplyNestedObject,
-  toggleSelectedOfField,
-  toggleSelectedOfMedia,
-} from "../../components/RenderDeeplyNestedObject";
+import RenderDeeplyNestedObject from "../../components/RenderDeeplyNestedObject";
 
 const CustomAPICustomizationPage = ({
   showCustomAPICustomizationPage,
@@ -31,15 +27,11 @@ const CustomAPICustomizationPage = ({
 }) => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-
-  /**
- [
-    { uid: "api::author.author", displayName: "Author" },
-    { uid: "api::book.book", displayName: "Book" },
-    { uid: "api::publisher.publisher", displayName: "Publisher" },
- ]
- */
   const [contentTypes, setContentTypes] = useState(null);
+  const [selectedContentType, setSelectedContentType] = useState();
+  const [selectableData, setSelectableData] = useState({
+    populate: [],
+  });
 
   useEffect(() => {
     (async () => {
@@ -50,51 +42,28 @@ const CustomAPICustomizationPage = ({
           displayName: item.info.displayName,
         };
       });
-
       setContentTypes(contentTypeMetadata);
-    })()
+    })();
   }, []);
 
-  /**
-  {
-    uid: "api::author.author",
-    displayName: "Author",
-  }
-   */
-  const [selectedContentType, setSelectedContentType] = useState();
-
-  const [selectableData, setSelectableData] = useState({
-    populate: [],
-  });
-
-  // side effects for the edit mode
-  // 1. setting Name
-  // 2. setting slug
-  // 3. setting selected content type
-  // 4. setting the selectable data
   useEffect(() => {
     (async () => {
       if (!showCustomAPICustomizationPage || !showCustomAPICustomizationPage.id)
         return;
 
-      // edit mode
       const editModeData = await customApiRequest.getCustomApiById(
         showCustomAPICustomizationPage.id
       );
 
       if (editModeData) {
-        // edit mode
         setName(editModeData.name);
         setSlug(editModeData.slug);
         setSelectedContentType(editModeData.selectedContentType);
         setSelectableData(editModeData.structure);
       }
-    })()
+    })();
   }, []);
 
-  // side effects for the create mode
-  // 1. setting selectableData
-  // 2. name, slug & selectedContentType empty/default state.
   useEffect(() => {
     (async () => {
       if (showCustomAPICustomizationPage && showCustomAPICustomizationPage.id)
@@ -102,7 +71,6 @@ const CustomAPICustomizationPage = ({
 
       if (!selectedContentType) return;
 
-      // create mode
       const selectedContentTypeRaw = await fetchContentTypeData({
         uid: selectedContentType.uid,
       });
@@ -111,8 +79,6 @@ const CustomAPICustomizationPage = ({
 
       const iteratedUIDs = [];
       const reducedEntries = {};
-
-      console.log(selectedContentTypeRaw);
 
       await getReducedDataObject({
         currentContentTypeRaw: cloneDeep(selectedContentTypeRaw),
@@ -123,7 +89,7 @@ const CustomAPICustomizationPage = ({
       if (reducedEntries) {
         setSelectableData(reducedEntries);
       }
-    })()
+    })();
   }, [selectedContentType]);
 
   function getNewFieldDataWithToggledSelected(entries, tableName, fieldName) {
@@ -164,6 +130,44 @@ const CustomAPICustomizationPage = ({
     return result;
   }
 
+  function getNewComponentDataWithToggledSelected(entries, tableName, componentName) {
+    const result = cloneDeepWith(entries, (value) => {
+      if (value && value.table) {
+        if (value.table === tableName) {
+          const components = [...value.components];
+          const toggledComponents = components.map((item) => {
+            if (item.name === componentName) {
+              return { selected: !item.selected, name: item.name };
+            } else {
+              return item;
+            }
+          });
+          return { ...value, components: toggledComponents };
+        }
+      }
+    });
+    return result;
+  }
+
+  function getNewDynamicZoneDataWithToggledSelected(entries, tableName, dynamicZoneName) {
+    const result = cloneDeepWith(entries, (value) => {
+      if (value && value.table) {
+        if (value.table === tableName) {
+          const dynamiczones = [...value.dynamiczones];
+          const toggledDynamicZones = dynamiczones.map((item) => {
+            if (item.name === dynamicZoneName) {
+              return { selected: !item.selected, name: item.name };
+            } else {
+              return item;
+            }
+          });
+          return { ...value, dynamiczones: toggledDynamicZones };
+        }
+      }
+    });
+    return result;
+  }
+
   function toggleSelectedOfField(tableName, fieldNameToToggle) {
     const updatedData = getNewFieldDataWithToggledSelected(
       selectableData,
@@ -182,14 +186,30 @@ const CustomAPICustomizationPage = ({
     setSelectableData(updatedData);
   }
 
+  function toggleSelectedOfComponent(tableName, componentNameToToggle) {
+    const updatedData = getNewComponentDataWithToggledSelected(
+      selectableData,
+      tableName,
+      componentNameToToggle
+    );
+    setSelectableData(updatedData);
+  }
+
+  function toggleSelectedOfDynamicZone(tableName, dynamicZoneNameToToggle) {
+    const updatedData = getNewDynamicZoneDataWithToggledSelected(
+      selectableData,
+      tableName,
+      dynamicZoneNameToToggle
+    );
+    setSelectableData(updatedData);
+  }
+
   const handleSubmit = async (e) => {
-    // Prevent submitting parent form
     e.preventDefault();
     e.stopPropagation();
 
     try {
       if (showCustomAPICustomizationPage && showCustomAPICustomizationPage.id) {
-        //edit mode
         await customApiRequest.updateCustomApi(
           showCustomAPICustomizationPage.id,
           {
@@ -200,7 +220,6 @@ const CustomAPICustomizationPage = ({
           }
         );
       } else {
-        // create mode
         await customApiRequest.addCustomApi({
           name: name,
           slug: slug,
@@ -210,7 +229,6 @@ const CustomAPICustomizationPage = ({
       }
 
       fetchData();
-
       setShowCustomAPICustomizationPage(false);
     } catch (e) {
       console.log("error", e);
@@ -308,15 +326,15 @@ const CustomAPICustomizationPage = ({
               value={selectedContentType ? selectedContentType.uid : null}
               disabled={
                 showCustomAPICustomizationPage &&
-                  showCustomAPICustomizationPage.id
+                showCustomAPICustomizationPage.id
                   ? true
                   : false
               }
               onChange={(val) => {
                 setSelectedContentType(
                   contentTypes &&
-                  contentTypes.length &&
-                  contentTypes.filter((item) => item.uid === val)[0]
+                    contentTypes.length &&
+                    contentTypes.filter((item) => item.uid === val)[0]
                 );
               }}
             >
@@ -349,9 +367,12 @@ const CustomAPICustomizationPage = ({
             selectableData.populate.map((item) => {
               return (
                 <RenderDeeplyNestedObject
+                  key={item.table}
                   data={item}
                   toggleSelectedOfField={toggleSelectedOfField}
                   toggleSelectedOfMedia={toggleSelectedOfMedia}
+                  toggleSelectedOfComponent={toggleSelectedOfComponent}
+                  toggleSelectedOfDynamicZone={toggleSelectedOfDynamicZone}
                 />
               );
             })}
