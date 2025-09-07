@@ -1,21 +1,17 @@
-import { request } from "@strapi/helper-plugin";
+import { getFetchClient } from "@strapi/strapi/admin";
+
+const { get, post, put } = getFetchClient();
 
 const customApiRequest = {
-  getAllCustomApis: () => request("/custom-api/find", { method: "GET" }),
+  getAllCustomApis: () => get("/custom-api/find"),
 
-  getCustomApiById: (id) => request(`/custom-api/find/${id}`, { method: "GET" }),
+  getCustomApiById: (id) => get(`/custom-api/find/${id}`),
 
-  addCustomApi: (data) => request("/custom-api/create", {
-    method: "POST",
-    body: { data },
-  }),
+  addCustomApi: (data) => post("/custom-api/create", { data }),
 
-  updateCustomApi: (id, data) => request(`/custom-api/update/${id}`, {
-    method: "PUT",
-    body: { data },
-  }),
+  updateCustomApi: (id, data) => put(`/custom-api/update/${id}`, { data }),
 
-  getAllContentTypes: () => request("/custom-api/content-types", { method: "GET" }),
+  getAllContentTypes: () => get("/custom-api/content-types"),
 };
 
 export default customApiRequest;

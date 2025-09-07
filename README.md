@@ -8,9 +8,18 @@ Design your custom API's (or custom reports / or custom views) directly from the
 &nbsp;
 ## ⚙️ Versions
 
-**Strapi v4** - (current) - [v1.x](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder)
+**Strapi v5** - (current) - [v2.x](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder)
+**Strapi v4** - (legacy) - [v1.x](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder)
 
 &nbsp;
+
+## Breaking changes in v2 (Strapi v5 Support)
+- **Strapi 5 Compatibility**: Fully migrated to Strapi v5 APIs
+- **Document Service API**: Migrated from Entity Service to Document Service API
+- **Helper Plugin Removed**: Custom implementation of translation utilities
+- **React Router v6**: Updated to use React Router DOM v6
+- **Design System Updates**: Updated to simplified Design System imports
+- **Peer Dependencies**: Now requires `@strapi/strapi: ^5.0.0`
 
 ## Breaking changes in v1
 - Support for media & multiple media added

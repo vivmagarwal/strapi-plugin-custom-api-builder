@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-custom-api",
-  "version": "1.0.6",
+  "version": "2.0.0",
   "description": "Create custom API's from within the Admin dashboard of Strapi.",
   "strapi": {
     "name": "custom-api",
@@ -14,7 +14,7 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "@strapi/strapi": "4.x.x"
+    "@strapi/strapi": "^5.0.0"
   },
   "author": {
     "name": "Vivek M. Agarwal",

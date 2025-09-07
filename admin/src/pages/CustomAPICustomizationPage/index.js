@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from "react";
 import ArrowLeft from "@strapi/icons/ArrowLeft";
 import Check from "@strapi/icons/Check";
-import { Button } from "@strapi/design-system/Button";
-import { Stack } from "@strapi/design-system/Stack";
-import { Box } from "@strapi/design-system/Box";
-import { Grid, GridItem } from "@strapi/design-system/Grid";
-import { ContentLayout, HeaderLayout } from "@strapi/design-system/Layout";
+import { Button, Stack, Box, Grid, GridItem, ContentLayout, HeaderLayout, TextInput, Select, Option, Typography } from "@strapi/design-system";
 import upperFirst from "lodash/upperFirst";
 import cloneDeepWith from "lodash/cloneDeepWith";
 import cloneDeep from "lodash/cloneDeep";
-import { TextInput } from "@strapi/design-system/TextInput";
 import customApiRequest from "../../api/custom-api";
-import { Select, Option } from "@strapi/design-system/Select";
-import { Typography } from "@strapi/design-system/Typography";
 import {
   fetchContentTypeData,
   getReducedDataObject,

@@ -7,41 +7,31 @@ const getService = (name) => {
 
 module.exports = ({ strapi }) => ({
   async create(data) {
-    return await strapi.entityService.create(
-      "plugin::custom-api.custom-api",
-      data
-    );
+    return await strapi.documents("plugin::custom-api.custom-api").create(data);
   },
 
   async find(query) {
-    return await strapi.entityService.findMany(
-      "plugin::custom-api.custom-api",
-      query
-    );
+    return await strapi.documents("plugin::custom-api.custom-api").findMany(query);
   },
 
   async findById(id, query) {
-    return await strapi.entityService.findOne(
-      "plugin::custom-api.custom-api",
-      id,
-      query
-    );
+    return await strapi.documents("plugin::custom-api.custom-api").findFirst({
+      documentId: id,
+      ...query
+    });
   },
 
   async findContentTypeBySlug(slug, query) {
-    return await strapi.entityService.findMany(
-      "plugin::custom-api.custom-api",
-      {
-        filters: { slug: slug },
-      }
-    );
+    return await strapi.documents("plugin::custom-api.custom-api").findMany({
+      filters: { slug: slug },
+      ...query
+    });
   },
 
   async update(id, data) {
-    return await strapi.entityService.update(
-      "plugin::custom-api.custom-api",
-      id,
+    return await strapi.documents("plugin::custom-api.custom-api").update({
+      documentId: id,
       data
-    );
+    });
   },
 });

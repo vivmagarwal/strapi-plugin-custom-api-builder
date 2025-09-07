@@ -5,13 +5,9 @@
  */
 
 import React, { memo, useState, useEffect, useMemo, useCallback } from "react";
-import { Layout, ContentLayout } from "@strapi/design-system/Layout";
-import { BaseHeaderLayout, HeaderLayout } from "@strapi/design-system/Layout";
-import { EmptyStateLayout } from "@strapi/design-system/EmptyStateLayout";
-import { Button } from "@strapi/design-system/Button";
-import { LoadingIndicatorPage } from "@strapi/helper-plugin";
+import { Layout, ContentLayout, BaseHeaderLayout, HeaderLayout, EmptyStateLayout, Button, Stack } from "@strapi/design-system";
+import { Page } from "@strapi/strapi/admin";
 import Plus from "@strapi/icons/Plus";
-import { Stack } from "@strapi/design-system/Stack";
 import upperFirst from "lodash/upperFirst";
 import { Illo } from "../../components/Illo";
 import CustomAPITable from "../../components/CustomAPITable";
@@ -51,7 +47,7 @@ const HomePage = () => {
 
   {
     if (isLoading) {
-      return <LoadingIndicatorPage />;
+      return <Page.Loading />;
     }
   }
 

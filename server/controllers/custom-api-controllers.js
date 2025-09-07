@@ -87,10 +87,7 @@ module.exports = {
 
       console.log(`[findCustomAPIDataBySlug] Generated query config:`, JSON.stringify(config, null, 2));
 
-      const entries = await strapi.entityService.findMany(
-        structure[0].selectedContentType.uid,
-        config
-      );
+      const entries = await strapi.documents(structure[0].selectedContentType.uid).findMany(config);
 
       // console.log(`[findCustomAPIDataBySlug] Fetched entries:`, JSON.stringify(entries, null, 2));
       ctx.send(entries);
@@ -262,7 +259,7 @@ let config = {
       //   }
       // );
 
-      const entries = await strapi.entityService.findMany('api::book.book', config);
+      const entries = await strapi.documents('api::book.book').findMany(config);
 
       return entries;
     } catch (err) {

@@ -1,4 +1,13 @@
-import { prefixPluginTranslations } from '@strapi/helper-plugin';
+// Custom implementation of prefixPluginTranslations since helper-plugin is removed in Strapi v5
+const prefixPluginTranslations = (trad, pluginId) => {
+  if (!pluginId) {
+    throw new TypeError("pluginId can't be empty");
+  }
+  return Object.keys(trad).reduce((acc, current) => {
+    acc[`${pluginId}.${current}`] = trad[current];
+    return acc;
+  }, {});
+};
 import pluginPkg from '../../package.json';
 import pluginId from './pluginId';
 import Initializer from './components/Initializer';
