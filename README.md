@@ -35,19 +35,19 @@ Design your custom API's (or custom reports / or custom views) directly from the
 
 - [x] Build an API Visually from the Admin UI
 - [x] Auto compose Routes, Controllers and Services
-- [ ] Complete UI tests
-- [ ] Use built in slug system to auto generate slugs and validate if they are unique
-- [ ] Add filtering capabilities
-- [ ] Add ordering/sorting capabilities
-- [ ] Add pagination capabilities
-- [ ] Robust way to handle both multi / single value
+- [x] Complete UI tests
+- [x] Use built in slug system to auto generate slugs and validate if they are unique
+- [x] Add filtering capabilities
+- [x] Add ordering/sorting capabilities
+- [x] Add pagination capabilities
+- [x] Robust way to handle both multi / single value
 - [x] Manage multiple relations
 - [x] Support Media & Multiple Media
 - [x] Disable if no content types
-- [ ] Improve UI for scalability
-- [ ] When we have a field in the builder and its deleted from the content-type, handle it in a graceful way
-- [ ] When we have a new field, show it in the builder while editing
-- [ ] Provide a way to visualise the constructed query
+- [x] Improve UI for scalability
+- [x] When we have a field in the builder and its deleted from the content-type, handle it in a graceful way
+- [x] When we have a new field, show it in the builder while editing
+- [x] Provide a way to visualise the constructed query
 
 
 ## ⏳ Installation

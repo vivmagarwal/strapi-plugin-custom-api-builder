@@ -17,3 +17,7 @@ coverage
 .cache
 *.tgz
 *.tsbuildinfo
+test-strapi5
+test-lodash-plugin
+strapi-test-custom-api
+tests/unit-tests/*.test.js

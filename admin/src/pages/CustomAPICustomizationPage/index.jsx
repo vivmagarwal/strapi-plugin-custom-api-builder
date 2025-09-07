@@ -9,6 +9,7 @@ import {
   getReducedDataObject,
 } from "../../utils/customApiBuilderUtils";
 import RenderDeeplyNestedObject from "../../components/RenderDeeplyNestedObject/index.jsx";
+import SlugInput from "../../components/SlugInput/index.jsx";
 
 const CustomAPICustomizationPage = ({
   showCustomAPICustomizationPage,
@@ -279,13 +280,17 @@ const CustomAPICustomizationPage = ({
               </GridItem>
 
               <GridItem col={6} s={12}>
-                <TextInput
-                  placeholder="A Slug for constructing URL"
-                  label="Slug"
+                <SlugInput
                   name="slug"
-                  hint={slug && `Get your data here: /custom-api/${slug}`}
-                  onChange={(e) => setSlug(e.target.value)}
                   value={slug}
+                  onChange={setSlug}
+                  label="Slug"
+                  placeholder="A slug for constructing URL"
+                  hint="Used to construct the API endpoint URL"
+                  sourceName={name}
+                  autoGenerate={true}
+                  required={true}
+                  excludeId={showCustomAPICustomizationPage?.id}
                 />
               </GridItem>
             </Grid>

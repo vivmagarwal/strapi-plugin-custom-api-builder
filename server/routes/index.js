@@ -74,6 +74,26 @@ module.exports = [
 
   {
     method: "GET",
+    path: "/validate-slug/:slug",
+    handler: "customApiControllers.validateSlug",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+
+  {
+    method: "GET",
+    path: "/:slug/filters",
+    handler: "customApiControllers.getFilterDocumentation",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+
+  {
+    method: "GET",
     path: "/test-em-out-do-not-use",
     handler: "customApiControllers.testEmOutDoNotUse",
     config: {
