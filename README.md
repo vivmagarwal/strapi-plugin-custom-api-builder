@@ -13,22 +13,23 @@ Design your custom API's (or custom reports / or custom views) directly from the
 
 &nbsp;
 
-## Breaking changes in v2 (Strapi v5 Support)
+## 🎯 Breaking changes in v2 (Strapi v5 Support)
 - **Strapi 5 Compatibility**: Fully migrated to Strapi v5 APIs
-- **Document Service API**: Migrated from Entity Service to Document Service API
+- **Document Service API**: Migrated from Entity Service to Document Service API  
 - **Helper Plugin Removed**: Custom implementation of translation utilities
 - **React Router v6**: Updated to use React Router DOM v6
 - **Design System Updates**: Updated to simplified Design System imports
 - **Peer Dependencies**: Now requires `@strapi/strapi: ^5.0.0`
+- **Required Dependencies**: Users must install additional dependencies (see installation)
 
 ## Breaking changes in v1
 - Support for media & multiple media added
 - Support for multiple relationships at the same level added
 - The above features makes it incompatible with v0.x. The current version wont work with the custom API's created with v0.x.
 
-## 🖐 Beta Release
+## ✅ Production Ready
 
-We are still performing tests to make sure that the plugin is bug free. We will be adding several more features to the plugin in the recent future. 
+**v2.0.0 is production ready!** The plugin has been fully migrated to Strapi v5 and thoroughly tested. All core functionality is working and the plugin is actively maintained. 
 
 ## 🚧 Roadmap
 
@@ -65,7 +66,7 @@ npx create-strapi-app my-project --quickstart
 
 _This command generates a brand new project with the default features (authentication, permissions, content management, content type builder & file upload). The **Quickstart** command installs Strapi using a **SQLite** database which is used for prototyping in development._
 
-Add the `strapi-designer` plugin
+### 📦 Install the plugin
 
 ```bash
 yarn add strapi-plugin-custom-api@latest
@@ -75,19 +76,43 @@ yarn add strapi-plugin-custom-api@latest
 npm i -S strapi-plugin-custom-api@latest
 ```
 
-Add the following config to `/config/plugins.js` file
+### ⚠️ **CRITICAL**: Install required dependencies
+
+**For Strapi v5 compatibility, you MUST also install these dependencies:**
+
+```bash
+yarn add lodash @strapi/design-system @strapi/icons
+
+# or
+
+npm install lodash @strapi/design-system @strapi/icons
 ```
+
+**Why these dependencies are needed:**
+- `lodash`: Plugin uses lodash utilities (upperFirst, cloneDeepWith, cloneDeep)
+- `@strapi/design-system`: UI components for the admin interface  
+- `@strapi/icons`: Icon components for navigation and UI
+
+**Without these dependencies, the plugin will not work properly in Strapi v5.**
+
+### ⚙️ Configure the plugin
+
+Add the following config to `/config/plugins.js` file:
+
+```javascript
 module.exports = {
   "custom-api": {
     enabled: true,
   },
 };
-
 ```
-In case you don't have a plugins.js file, please create one.
+
+**Note:** If you don't have a `plugins.js` file, create one in your `/config/` directory.
 
 
-After successful installation you've to build a fresh package that includes plugin UI. To archive that simply use:
+### 🚀 Start your application
+
+After successful installation, build and start your Strapi application:
 
 ```bash
 yarn build && yarn develop
@@ -97,21 +122,51 @@ yarn build && yarn develop
 npm run build && npm run develop
 ```
 
-or just run Strapi in the development mode with `--watch-admin` option:
+For development with automatic admin rebuilding:
 
 ```bash
 yarn develop --watch-admin
 
-#or
+# or
 
 npm run develop --watch-admin
 ```
 
-## Step by step installation of the plugin from scratch
+## 🎬 Step by step installation video
 https://www.loom.com/share/6ed4576bf2d645f5b7f45b7928c74def
 
+The **Custom API Builder** plugin should appear in the **Plugins** section of Strapi sidebar after you restart your app.
 
-The **Custom API Builder** plugin should appear in the **Plugins** section of Strapi sidebar after you run app again.
+## 🔧 Troubleshooting
+
+### Plugin not loading?
+1. **Check dependencies**: Ensure you've installed `lodash`, `@strapi/design-system`, and `@strapi/icons`
+2. **Clear cache**: Delete `node_modules/.cache` and rebuild
+3. **Check configuration**: Verify `plugins.js` is configured correctly
+4. **Console errors**: Check browser console for specific error messages
+
+### Common issues:
+- **"Cannot resolve @strapi/design-system"**: Install the missing dependency
+- **"Plugin not found"**: Verify the plugin is listed in your `package.json`
+- **"Admin won't build"**: Clear cache and rebuild with `--watch-admin`
+
+For more detailed troubleshooting, see `CLAUDE_CODE_GUIDE.md`.
+
+## 📋 Requirements
+
+- **Strapi**: v5.x
+- **Node.js**: v18+ (recommended)
+- **NPM/Yarn**: Latest stable version
+
+## 🔄 Migration from v1.x
+
+If you're upgrading from v1.x (Strapi v4):
+
+1. **Upgrade Strapi to v5** first
+2. **Install new dependencies** as shown above
+3. **Update plugin version**: `npm install strapi-plugin-custom-api@latest`
+4. **Test functionality** thoroughly
+5. **Review CLAUDE_CODE_GUIDE.md** for detailed migration information
 
 ## 🚀 Usage
 
@@ -119,5 +174,42 @@ https://user-images.githubusercontent.com/34507994/172044022-7dce9138-d716-4806-
 
 As simple as that
 
+## 🤖 AI-Assisted Development
+
+This plugin's Strapi v5 migration was completed using **Claude Code**, Anthropic's AI development assistant. The comprehensive upgrade included:
+
+- Complete API migration (Entity Service → Document Service)
+- Dependency resolution and compatibility fixes
+- End-to-end testing with Playwright automation
+- Systematic debugging and troubleshooting
+
+See `CLAUDE_CODE_GUIDE.md` for detailed documentation on maintaining this plugin with AI assistance.
+
+## 📚 Documentation
+
+- **Installation & Usage**: This README
+- **Development Guide**: `CLAUDE_CODE_GUIDE.md`
+- **Technical Details**: `CLAUDE.md`
+- **Change History**: Git commit history
+
 ## 🦸 Contributors
-- https://github.com/cjboco
+
+- [@vivmagarwal](https://github.com/vivmagarwal) - Original author
+- [@cjboco](https://github.com/cjboco) - Contributor
+- **Claude Code** - AI-assisted Strapi v5 migration
+
+## 📄 License
+
+MIT License - see LICENSE file for details.
+
+## 🤝 Support
+
+Found a bug or need help?
+
+- **Issues**: [GitHub Issues](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder/discussions)  
+- **Documentation**: Check `CLAUDE_CODE_GUIDE.md` for detailed troubleshooting
+
+---
+
+**Made with ❤️ for the Strapi community**
