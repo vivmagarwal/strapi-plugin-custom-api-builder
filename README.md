@@ -69,15 +69,17 @@ No more manually writing controllers, routes, or query builders. Focus on what d
 ### Step 1: Install Strapi (if you haven't already)
 
 ```bash
-# Create a new Strapi project
-npx create-strapi@latest my-project --quickstart
+# Create a new Strapi project using npx (recommended)
+npx create-strapi@latest my-project --quickstart --skip-cloud
 
-# Or using yarn
-yarn create strapi my-project --quickstart
+# The command will prompt you - answer 'N' to skip anonymous telemetry
+# Then it will install dependencies and set up your project
 
-# Navigate to your project
+# Navigate to your project once installation is complete
 cd my-project
 ```
+
+**Note**: The `--quickstart` flag creates a project with SQLite database for quick setup. The `--skip-cloud` flag skips the Strapi Cloud setup prompts.
 
 ### Step 2: Install the Custom API Builder Plugin
 
@@ -121,9 +123,14 @@ module.exports = {
 # Rebuild the admin panel
 npm run build
 
-# Start Strapi in development mode
+# Start Strapi in development mode  
 npm run develop
+
+# Or with npx (if strapi command is not available)
+npx strapi develop
 ```
+
+The server will start and open your browser to `http://localhost:1337/admin` where you'll need to create your first admin user.
 
 ## 🚀 Quick Start Guide
 
@@ -392,6 +399,10 @@ const { data } = await axios.get('/api/custom-api/product-catalog-api', {
 ```bash
 npm run build
 npm run develop
+
+# Or if the strapi command is not found:
+npx strapi build
+npx strapi develop
 ```
 
 #### 2. "No content types available" Message
@@ -432,6 +443,42 @@ module.exports = {
     level: 'debug',
   }
 };
+```
+
+### Common Strapi v5 Installation Issues
+
+#### "strapi: command not found"
+
+**Solution**: Use npx to run Strapi commands
+```bash
+# Instead of: strapi develop
+npx strapi develop
+
+# Instead of: strapi build  
+npx strapi build
+```
+
+#### Missing Dependencies Error
+
+**Solution**: Ensure all required dependencies are installed
+```bash
+# Clean install
+rm -rf node_modules package-lock.json
+npm install
+
+# Install missing UI dependencies
+npm install @strapi/design-system @strapi/icons
+```
+
+#### Port Already in Use
+
+**Solution**: Strapi runs on port 1337 by default
+```bash
+# Kill process on port 1337
+lsof -ti:1337 | xargs kill -9
+
+# Or run on different port
+PORT=8080 npm run develop
 ```
 
 ## 🤝 Contributing
