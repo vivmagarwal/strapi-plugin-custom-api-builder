@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import ArrowLeft from "@strapi/icons/ArrowLeft";
-import Check from "@strapi/icons/Check";
+import { ArrowLeft } from "@strapi/icons";
+import { Check } from "@strapi/icons";
 import { Button, Stack, Box, Grid, GridItem, ContentLayout, HeaderLayout, TextInput, Select, Option, Typography } from "@strapi/design-system";
 import upperFirst from "lodash/upperFirst";
 import cloneDeepWith from "lodash/cloneDeepWith";
@@ -10,7 +10,7 @@ import {
   fetchContentTypeData,
   getReducedDataObject,
 } from "../../utils/customApiBuilderUtils";
-import RenderDeeplyNestedObject from "../../components/RenderDeeplyNestedObject";
+import RenderDeeplyNestedObject from "../../components/RenderDeeplyNestedObject/index.jsx";
 
 const CustomAPICustomizationPage = ({
   showCustomAPICustomizationPage,

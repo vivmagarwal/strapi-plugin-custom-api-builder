@@ -1,15 +1,15 @@
 import React from "react";
 import { Link } from "@strapi/strapi/admin";
-import ArrowLeft from "@strapi/icons/ArrowLeft";
-import Check from "@strapi/icons/Check";
-import Pencil from "@strapi/icons/Pencil";
+import { ArrowLeft } from "@strapi/icons";
+import { Check } from "@strapi/icons";
+import { Pencil } from "@strapi/icons";
 import { Flex, Box } from "@strapi/design-system";
 import get from "lodash/get";
 import has from "lodash/has";
 import isEqual from "lodash/isEqual";
 import { useIntl } from "react-intl";
 import { useMatch, useLocation } from "react-router-dom";
-import Plus from "@strapi/icons/Plus";
+import { Plus } from "@strapi/icons";
 import { Button, Stack, HeaderLayout } from "@strapi/design-system";
 import upperFirst from "lodash/upperFirst";
 

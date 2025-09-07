@@ -9,7 +9,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Page } from '@strapi/strapi/admin';
 import pluginId from '../../pluginId';
-import HomePage from '../HomePage';
+import HomePage from '../HomePage/index.jsx';
 
 const App = () => {
   return (

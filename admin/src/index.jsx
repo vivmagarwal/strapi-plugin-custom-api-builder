@@ -11,7 +11,7 @@ const prefixPluginTranslations = (trad, pluginId) => {
 import pluginPkg from '../../package.json';
 import pluginId from './pluginId';
 import Initializer from './components/Initializer';
-import PluginIcon from './components/PluginIcon';
+import PluginIcon from './components/PluginIcon/index.jsx';
 
 const name = pluginPkg.strapi.name;
 
@@ -25,7 +25,7 @@ export default {
         defaultMessage: name,
       },
       Component: async () => {
-        const component = await import(/* webpackChunkName: "[request]" */ './pages/App');
+        const component = await import(/* webpackChunkName: "[request]" */ './pages/App/index.jsx');
 
         return component;
       },

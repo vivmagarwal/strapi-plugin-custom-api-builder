@@ -16,10 +16,10 @@ import { IconButton } from "@strapi/design-system/IconButton";
 import { VisuallyHidden } from "@strapi/design-system/VisuallyHidden";
 import { BaseCheckbox } from "@strapi/design-system/BaseCheckbox";
 import { TextInput } from "@strapi/design-system/TextInput";
-import Show from '@strapi/icons/Eye';
-import Pencil from "@strapi/icons/Pencil";
-import Trash from "@strapi/icons/Trash";
-import Plus from "@strapi/icons/Plus";
+import { Eye as Show } from '@strapi/icons';
+import { Pencil } from "@strapi/icons";
+import { Trash } from "@strapi/icons";
+import { Plus } from "@strapi/icons";
 import openWithNewTab from '../../utils/openWithNewTab';
 
 function CustomAPICheckbox({ value, checkboxID, callback, disabled }) {
