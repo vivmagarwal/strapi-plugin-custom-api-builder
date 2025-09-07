@@ -1,4 +1,4 @@
-const cloneDeepWith = require("lodash/cloneDeepWith");
+const { cloneDeepWith } = require("../../utils/lodash-wrapper.js");
 
 // Filters out unselected fields from the given structure.
 function getTrimmedStructure(structure) {

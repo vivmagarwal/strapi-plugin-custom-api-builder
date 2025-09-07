@@ -1,7 +1,6 @@
 "use strict";
 
-const { has, assoc, mapValues, prop } = require("lodash/fp");
-const cloneDeepWith = require("lodash/cloneDeepWith");
+const { has, assoc, mapValues, prop, cloneDeepWith } = require("../../utils/lodash-wrapper.js");
 const { getConfigObject, getTrimmedStructure } = require("../utils");
 
 const hasEditMainField = has("edit.mainField");

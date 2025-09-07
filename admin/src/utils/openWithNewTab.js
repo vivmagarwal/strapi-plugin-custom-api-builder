@@ -1,4 +1,4 @@
-import { startsWith } from 'lodash';
+const { startsWith } = require("../../../utils/lodash-wrapper.js");
 
 const openWithNewTab = (path) => {
   const url = (() => {

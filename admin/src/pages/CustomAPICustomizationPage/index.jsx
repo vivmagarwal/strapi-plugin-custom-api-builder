@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ArrowLeft } from "@strapi/icons";
 import { Check } from "@strapi/icons";
 import { Button, Stack, Box, Grid, GridItem, ContentLayout, HeaderLayout, TextInput, Select, Option, Typography } from "@strapi/design-system";
-import upperFirst from "lodash/upperFirst";
-import cloneDeepWith from "lodash/cloneDeepWith";
-import cloneDeep from "lodash/cloneDeep";
+const { upperFirst, cloneDeepWith, cloneDeep } = require("../../../../utils/lodash-wrapper.js");
 import customApiRequest from "../../api/custom-api";
 import {
   fetchContentTypeData,

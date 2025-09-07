@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-custom-api",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Create custom API's from within the Admin dashboard of Strapi.",
   "strapi": {
     "name": "custom-api",
@@ -11,9 +11,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/vivmagarwal/strapi-plugin-custom-api-builder"
-  },
-  "dependencies": {
-    "lodash": "^4.17.21"
   },
   "peerDependencies": {
     "@strapi/strapi": "^5.0.0"

@@ -76,24 +76,23 @@ yarn add strapi-plugin-custom-api@latest
 npm i -S strapi-plugin-custom-api@latest
 ```
 
-### ⚠️ **CRITICAL**: Install required dependencies
+### ⚠️ **REQUIRED**: Install UI dependencies
 
-**For Strapi v5 compatibility, you MUST also install these dependencies:**
+**For Strapi v5 compatibility, you MUST also install these UI dependencies:**
 
 ```bash
-yarn add lodash @strapi/design-system @strapi/icons
+yarn add @strapi/design-system @strapi/icons
 
 # or
 
-npm install lodash @strapi/design-system @strapi/icons
+npm install @strapi/design-system @strapi/icons
 ```
 
 **Why these dependencies are needed:**
-- `lodash`: Plugin uses lodash utilities (upperFirst, cloneDeepWith, cloneDeep)
 - `@strapi/design-system`: UI components for the admin interface  
 - `@strapi/icons`: Icon components for navigation and UI
 
-**Without these dependencies, the plugin will not work properly in Strapi v5.**
+**Note**: `lodash` is now included directly in the plugin - no need to install separately!
 
 ### ⚙️ Configure the plugin
 

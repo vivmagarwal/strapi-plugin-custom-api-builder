@@ -124,7 +124,7 @@ cd test-strapi
 npm install ../strapi-plugin-custom-api-builder
 
 # Install required dependencies  
-npm install lodash @strapi/design-system @strapi/icons
+npm install @strapi/design-system @strapi/icons
 ```
 
 #### Playwright Testing with Claude Code

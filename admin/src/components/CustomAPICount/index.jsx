@@ -4,14 +4,11 @@ import { ArrowLeft } from "@strapi/icons";
 import { Check } from "@strapi/icons";
 import { Pencil } from "@strapi/icons";
 import { Flex, Box } from "@strapi/design-system";
-import get from "lodash/get";
-import has from "lodash/has";
-import isEqual from "lodash/isEqual";
+const { get, has, isEqual, upperFirst } = require("../../../../utils/lodash-wrapper.js");
 import { useIntl } from "react-intl";
 import { useMatch, useLocation } from "react-router-dom";
 import { Plus } from "@strapi/icons";
 import { Button, Stack, HeaderLayout } from "@strapi/design-system";
-import upperFirst from "lodash/upperFirst";
 
 export default function CustomAPICount({
   count,

@@ -8,7 +8,7 @@ import React, { memo, useState, useEffect, useMemo, useCallback } from "react";
 import { Layout, ContentLayout, BaseHeaderLayout, HeaderLayout, EmptyStateLayout, Button, Stack } from "@strapi/design-system";
 import { Page } from "@strapi/strapi/admin";
 import { Plus } from "@strapi/icons";
-import upperFirst from "lodash/upperFirst";
+const { upperFirst } = require("../../../../utils/lodash-wrapper.js");
 import { Illo } from "../../components/Illo/index.jsx";
 import CustomAPITable from "../../components/CustomAPITable/index.jsx";
 import CustomAPICustomizationPage from "../CustomAPICustomizationPage";
