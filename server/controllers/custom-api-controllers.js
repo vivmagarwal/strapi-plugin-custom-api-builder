@@ -1,6 +1,5 @@
 "use strict";
 
-const { contentTypes: contentTypesUtils } = require("@strapi/utils");
 const { has, assoc, mapValues, prop } = require("lodash/fp");
 const cloneDeepWith = require("lodash/cloneDeepWith");
 const { getConfigObject, getTrimmedStructure } = require("../utils");
