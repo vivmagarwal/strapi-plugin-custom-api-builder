@@ -1,214 +1,488 @@
-# Strapi Custom API Builder plugin
+# 🚀 Strapi Custom API Builder Plugin
 
-Design your custom API's (or custom reports / or custom views) directly from the [Strapi CMS](https://github.com/strapi/strapi) admin panel. Simply select the fields you need to show, enter a valid slug and let the plugin magically create the routes, controllers & services for you. Very easy to create & even easier to maintain.
-&nbsp;
+> **Bringing the power of Drupal Views to Strapi** - Build custom APIs visually, without writing a single line of code!
 
-![custom-api-builder-ss-3](https://user-images.githubusercontent.com/34507994/172046114-2cc9bf30-b2f1-4bec-9a60-b6a3117c61bc.png)
+[![NPM Version](https://img.shields.io/npm/v/strapi-plugin-custom-api)](https://www.npmjs.com/package/strapi-plugin-custom-api)
+[![License](https://img.shields.io/npm/l/strapi-plugin-custom-api)](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder/blob/main/LICENSE)
 
-&nbsp;
+## 🌟 Vision
+
+Remember the power and flexibility of Drupal Views? The ability to create complex, filtered, and sorted data presentations through a visual interface? **This plugin brings that same revolutionary approach to Strapi.**
+
+Just as Drupal Views transformed how developers and content managers create data displays in Drupal, the **Strapi Custom API Builder** empowers you to:
+
+- 🎨 **Visually design APIs** through an intuitive interface
+- 🔍 **Apply complex filters** without writing query logic
+- 📊 **Sort and paginate** data with simple selections
+- 🔗 **Handle relationships** elegantly and automatically
+- ⚡ **Generate production-ready endpoints** instantly
+- 🛡️ **Maintain security** with built-in validation and sanitization
+
+No more manually writing controllers, routes, or query builders. Focus on what data you want to expose, and let the plugin handle the rest.
+## 📖 Table of Contents
+
+- [Features](#-features)
+- [Installation](#-installation)
+- [Quick Start Guide](#-quick-start-guide)
+- [Step-by-Step Tutorial](#-step-by-step-tutorial)
+- [API Features](#-api-features)
+- [Advanced Usage](#-advanced-usage)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+## ✨ Features
+
+### Core Capabilities
+- ✅ **Visual API Builder** - Point-and-click interface for creating custom endpoints
+- ✅ **Smart Field Selection** - Choose exactly which fields to expose
+- ✅ **Relationship Management** - Automatically handle complex data relationships
+- ✅ **Advanced Filtering** - 16+ filter operators ($eq, $contains, $gte, etc.)
+- ✅ **Multi-field Sorting** - Sort by multiple fields with various formats
+- ✅ **Flexible Pagination** - Page-based and offset-based pagination support
+- ✅ **Query Visualization** - See your API structure before deployment
+- ✅ **Auto-generated Documentation** - Each API comes with filter documentation
+- ✅ **Schema Validation** - Gracefully handles content type changes
+- ✅ **Production Ready** - Optimized queries with proper sanitization
+
+### What Makes It Special?
+- 🎯 **No Code Required** - Build complex APIs without writing controllers
+- 🔄 **Live Preview** - See example queries and responses in real-time
+- 🛡️ **Security First** - Built-in validation and sanitization
+- 📈 **Scalable** - Handles large datasets with intelligent pagination
+- 🔧 **Maintainable** - Changes to content types are handled gracefully
+
 ## ⚙️ Versions
 
-**Strapi v5** - (current) - [v2.x](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder)
-**Strapi v4** - (legacy) - [v1.x](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder)
-
-&nbsp;
-
-## 🎯 Breaking changes in v2 (Strapi v5 Support)
-- **Strapi 5 Compatibility**: Fully migrated to Strapi v5 APIs
-- **Document Service API**: Migrated from Entity Service to Document Service API  
-- **Helper Plugin Removed**: Custom implementation of translation utilities
-- **React Router v6**: Updated to use React Router DOM v6
-- **Design System Updates**: Updated to simplified Design System imports
-- **Peer Dependencies**: Now requires `@strapi/strapi: ^5.0.0`
-- **Required Dependencies**: Users must install additional dependencies (see installation)
-
-## Breaking changes in v1
-- Support for media & multiple media added
-- Support for multiple relationships at the same level added
-- The above features makes it incompatible with v0.x. The current version wont work with the custom API's created with v0.x.
-
-## ✅ Production Ready
-
-**v2.0.0 is production ready!** The plugin has been fully migrated to Strapi v5 and thoroughly tested. All core functionality is working and the plugin is actively maintained. 
-
-## 🚧 Roadmap
-
-- [x] Build an API Visually from the Admin UI
-- [x] Auto compose Routes, Controllers and Services
-- [x] Complete UI tests
-- [x] Use built in slug system to auto generate slugs and validate if they are unique
-- [x] Add filtering capabilities
-- [x] Add ordering/sorting capabilities
-- [x] Add pagination capabilities
-- [x] Robust way to handle both multi / single value
-- [x] Manage multiple relations
-- [x] Support Media & Multiple Media
-- [x] Disable if no content types
-- [x] Improve UI for scalability
-- [x] When we have a field in the builder and its deleted from the content-type, handle it in a graceful way
-- [x] When we have a new field, show it in the builder while editing
-- [x] Provide a way to visualise the constructed query
+- **Strapi v5** - (current) - v2.x
+- **Strapi v4** - (legacy) - v1.x
 
 
-## ⏳ Installation
+## 📦 Installation
 
-Install Strapi with this **Quickstart** command to create a Strapi project instantly:
+### Prerequisites
 
-- (Use **yarn** to install the Strapi project (recommended). [Install yarn with these docs](https://yarnpkg.com/lang/en/docs/install/).)
+- Strapi v5.0.0 or higher
+- Node.js 18.x or 20.x
+- npm or yarn package manager
+
+### Step 1: Install Strapi (if you haven't already)
 
 ```bash
-# with yarn
-yarn create strapi-app my-project --quickstart
+# Create a new Strapi project
+npx create-strapi@latest my-project --quickstart
 
-# with npm/npx
-npx create-strapi-app my-project --quickstart
+# Or using yarn
+yarn create strapi my-project --quickstart
+
+# Navigate to your project
+cd my-project
 ```
 
-_This command generates a brand new project with the default features (authentication, permissions, content management, content type builder & file upload). The **Quickstart** command installs Strapi using a **SQLite** database which is used for prototyping in development._
-
-### 📦 Install the plugin
+### Step 2: Install the Custom API Builder Plugin
 
 ```bash
-yarn add strapi-plugin-custom-api@latest
+# Using npm
+npm install strapi-plugin-custom-api
 
-# or
-
-npm i -S strapi-plugin-custom-api@latest
+# Or using yarn
+yarn add strapi-plugin-custom-api
 ```
 
-### ⚠️ **REQUIRED**: Install UI dependencies
+### Step 3: Install Required Dependencies
 
-**For Strapi v5 compatibility, you MUST also install these UI dependencies:**
+**IMPORTANT**: You must also install these UI dependencies for Strapi v5:
 
 ```bash
-yarn add @strapi/design-system @strapi/icons
-
-# or
-
 npm install @strapi/design-system @strapi/icons
+
+# Or using yarn
+yarn add @strapi/design-system @strapi/icons
 ```
 
-**Why these dependencies are needed:**
-- `@strapi/design-system`: UI components for the admin interface  
-- `@strapi/icons`: Icon components for navigation and UI
+### Step 4: Configure the Plugin
 
-**Note**: `lodash` is now included directly in the plugin - no need to install separately!
-
-### ⚙️ Configure the plugin
-
-Add the following config to `/config/plugins.js` file:
+Create or update `config/plugins.js`:
 
 ```javascript
 module.exports = {
-  "custom-api": {
+  'custom-api': {
     enabled: true,
-  },
+    config: {
+      // Add any custom configuration here
+    }
+  }
 };
 ```
 
-**Note:** If you don't have a `plugins.js` file, create one in your `/config/` directory.
-
-
-### 🚀 Start your application
-
-After successful installation, build and start your Strapi application:
+### Step 5: Rebuild and Start Strapi
 
 ```bash
-yarn build && yarn develop
+# Rebuild the admin panel
+npm run build
 
-# or
-
-npm run build && npm run develop
+# Start Strapi in development mode
+npm run develop
 ```
 
-For development with automatic admin rebuilding:
+## 🚀 Quick Start Guide
+
+### 1. Access the Plugin
+
+After starting Strapi, navigate to your admin panel (typically `http://localhost:1337/admin`). You'll find **"Custom Api Builder"** in the left sidebar menu.
+
+### 2. Create Your First Custom API
+
+1. Click on **"Custom Api Builder"** in the sidebar
+2. Click the **"Create new API"** button
+3. Fill in the basic information:
+   - **Name**: Give your API a descriptive name (e.g., "Product Catalog")
+   - **Slug**: This will be auto-generated (e.g., "product-catalog")
+   - **Content Type**: Select the content type to query
+
+### 3. Select Fields
+
+Choose which fields to include in your API response:
+- ✅ Check the fields you want to expose
+- 🔍 Use the search bar to find specific fields quickly
+- 🏷️ Filter by field type using the type badges
+
+### 4. Configure Features
+
+Enable the features you need:
+- **Filtering**: Allow clients to filter results
+- **Sorting**: Enable result ordering
+- **Pagination**: Add pagination support
+
+### 5. Save and Test
+
+1. Click **"Save"** to create your API
+2. Your endpoint is immediately available at:
+   ```
+   GET /api/custom-api/your-slug
+   ```
+
+## 📚 Step-by-Step Tutorial
+
+### Creating a Product Catalog API
+
+Let's build a real-world example: a product catalog API with filtering, sorting, and pagination.
+
+#### Step 1: Set Up Your Content Type
+
+First, ensure you have a Product content type with these fields:
+- name (Text)
+- description (Rich Text)
+- price (Number)
+- category (Relation to Category)
+- inStock (Boolean)
+- featured (Boolean)
+
+#### Step 2: Create the Custom API
+
+1. Navigate to **Custom Api Builder**
+2. Click **"Create new API"**
+3. Enter:
+   - **Name**: "Product Catalog API"
+   - **Slug**: Will auto-generate as "product-catalog-api"
+   - **Content Type**: Select "Product"
+
+#### Step 3: Select Fields
+
+Check the following fields:
+- ✅ name
+- ✅ description
+- ✅ price
+- ✅ category
+- ✅ inStock
+- ✅ featured
+
+#### Step 4: Configure Relationships
+
+For the category relationship:
+- Select which category fields to include (e.g., name, slug)
+- The plugin automatically handles the join queries
+
+#### Step 5: Enable Features
+
+- ✅ Enable Filtering
+- ✅ Enable Sorting
+- ✅ Enable Pagination
+
+#### Step 6: Save and Use Your API
+
+Your API is now available! Here are example queries:
 
 ```bash
-yarn develop --watch-admin
+# Get all products
+GET /api/custom-api/product-catalog-api
 
-# or
+# Filter by price range
+GET /api/custom-api/product-catalog-api?price[$gte]=10&price[$lte]=100
 
-npm run develop --watch-admin
+# Filter by category and stock
+GET /api/custom-api/product-catalog-api?category.name=Electronics&inStock=true
+
+# Sort by price (ascending) and name (descending)
+GET /api/custom-api/product-catalog-api?sort=price,-name
+
+# Paginate results
+GET /api/custom-api/product-catalog-api?page=2&pageSize=20
+
+# Combine everything
+GET /api/custom-api/product-catalog-api?featured=true&price[$lte]=50&sort=-createdAt&page=1&pageSize=10
 ```
 
-## 🎬 Step by step installation video
-https://www.loom.com/share/6ed4576bf2d645f5b7f45b7928c74def
+## 🔧 API Features
 
-The **Custom API Builder** plugin should appear in the **Plugins** section of Strapi sidebar after you restart your app.
+### Filtering
 
-## 🔧 Troubleshooting
+The plugin supports 16 filter operators:
 
-### Plugin not loading?
-1. **Check dependencies**: Ensure you've installed `lodash`, `@strapi/design-system`, and `@strapi/icons`
-2. **Clear cache**: Delete `node_modules/.cache` and rebuild
-3. **Check configuration**: Verify `plugins.js` is configured correctly
-4. **Console errors**: Check browser console for specific error messages
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `$eq` | Equals | `?name[$eq]=iPhone` |
+| `$ne` | Not equals | `?status[$ne]=draft` |
+| `$contains` | Contains substring | `?title[$contains]=guide` |
+| `$notContains` | Doesn't contain | `?title[$notContains]=draft` |
+| `$in` | In array | `?category[$in]=tech,mobile` |
+| `$notIn` | Not in array | `?status[$notIn]=draft,archived` |
+| `$lt` | Less than | `?price[$lt]=100` |
+| `$lte` | Less than or equal | `?price[$lte]=100` |
+| `$gt` | Greater than | `?views[$gt]=1000` |
+| `$gte` | Greater than or equal | `?rating[$gte]=4` |
+| `$between` | Between two values | `?price[$between]=10,100` |
+| `$startsWith` | Starts with | `?title[$startsWith]=How` |
+| `$endsWith` | Ends with | `?email[$endsWith]=@gmail.com` |
+| `$null` | Is null | `?deletedAt[$null]=true` |
+| `$notNull` | Is not null | `?publishedAt[$notNull]=true` |
+| `$or` | OR condition | `?$or[0][name]=iPhone&$or[1][name]=Samsung` |
 
-### Common issues:
-- **"Cannot resolve @strapi/design-system"**: Install the missing dependency
-- **"Plugin not found"**: Verify the plugin is listed in your `package.json`
-- **"Admin won't build"**: Clear cache and rebuild with `--watch-admin`
+### Sorting
 
-For more detailed troubleshooting, see `CLAUDE_CODE_GUIDE.md`.
+Multiple sorting formats are supported:
 
-## 📋 Requirements
+```bash
+# Comma-separated
+?sort=price,-createdAt
 
-- **Strapi**: v5.x
-- **Node.js**: v18+ (recommended)
-- **NPM/Yarn**: Latest stable version
+# Array format
+?sort[]=price&sort[]=-createdAt
 
-## 🔄 Migration from v1.x
+# Object format
+?sort[price]=asc&sort[createdAt]=desc
 
-If you're upgrading from v1.x (Strapi v4):
+# With symbols
+?sort=+price,-createdAt
+```
 
-1. **Upgrade Strapi to v5** first
-2. **Install new dependencies** as shown above
-3. **Update plugin version**: `npm install strapi-plugin-custom-api@latest`
-4. **Test functionality** thoroughly
-5. **Review CLAUDE_CODE_GUIDE.md** for detailed migration information
+### Pagination
 
-## 🚀 Usage
+Two pagination styles:
 
-https://user-images.githubusercontent.com/34507994/172044022-7dce9138-d716-4806-a765-b446f24a94dd.mp4
+```bash
+# Page-based (recommended)
+?page=2&pageSize=20
 
-As simple as that
+# Offset-based
+?offset=20&limit=20
+```
 
-## 🤖 AI-Assisted Development
+Response includes metadata:
+```json
+{
+  "data": [...],
+  "meta": {
+    "pagination": {
+      "page": 2,
+      "pageSize": 20,
+      "total": 150,
+      "pageCount": 8
+    }
+  }
+}
+```
 
-This plugin's Strapi v5 migration was completed using **Claude Code**, Anthropic's AI development assistant. The comprehensive upgrade included:
+### Filter Documentation Endpoint
 
-- Complete API migration (Entity Service → Document Service)
-- Dependency resolution and compatibility fixes
-- End-to-end testing with Playwright automation
-- Systematic debugging and troubleshooting
+Each API automatically gets a documentation endpoint:
 
-See `CLAUDE_CODE_GUIDE.md` for detailed documentation on maintaining this plugin with AI assistance.
+```bash
+GET /api/custom-api/your-slug/filters
+```
 
-## 📚 Documentation
+Returns available filters, operators, and examples specific to your API.
 
-- **Installation & Usage**: This README
-- **Development Guide**: `CLAUDE_CODE_GUIDE.md`
-- **Technical Details**: `CLAUDE.md`
-- **Change History**: Git commit history
+## 🎯 Advanced Usage
 
-## 🦸 Contributors
+### Working with Relationships
 
-- [@vivmagarwal](https://github.com/vivmagarwal) - Original author
-- [@cjboco](https://github.com/cjboco) - Contributor
-- **Claude Code** - AI-assisted Strapi v5 migration
+The plugin intelligently handles relationships:
+
+```javascript
+// One-to-Many: Returns array
+{
+  "product": {
+    "name": "iPhone",
+    "categories": [
+      { "id": 1, "name": "Electronics" },
+      { "id": 2, "name": "Mobile" }
+    ]
+  }
+}
+
+// Many-to-One: Returns single object
+{
+  "product": {
+    "name": "iPhone",
+    "manufacturer": { "id": 1, "name": "Apple" }
+  }
+}
+```
+
+### Complex Filtering Examples
+
+```bash
+# Products in multiple categories with price range
+?category.slug[$in]=electronics,computers&price[$between]=100,500
+
+# Featured products or products with high ratings
+?$or[0][featured]=true&$or[1][rating][$gte]=4.5
+
+# Products without images
+?images[$null]=true
+
+# Recent products in stock
+?inStock=true&createdAt[$gte]=2024-01-01
+```
+
+### JavaScript/TypeScript Integration
+
+```javascript
+// Using fetch
+const response = await fetch('/api/custom-api/product-catalog-api?' + new URLSearchParams({
+  'category.slug': 'electronics',
+  'price[$lte]': '500',
+  'sort': '-rating',
+  'page': '1',
+  'pageSize': '20'
+}));
+
+const { data, meta } = await response.json();
+
+// Using axios
+const { data } = await axios.get('/api/custom-api/product-catalog-api', {
+  params: {
+    'featured': true,
+    'price[$between]': '10,100',
+    'sort': ['price', '-createdAt'],
+    'page': 1,
+    'pageSize': 20
+  }
+});
+```
+
+## 🔍 Troubleshooting
+
+### Common Issues and Solutions
+
+#### 1. Plugin Not Appearing in Admin Panel
+
+**Solution**: Rebuild the admin panel
+```bash
+npm run build
+npm run develop
+```
+
+#### 2. "No content types available" Message
+
+**Solution**: Create at least one content type in your Strapi project first.
+
+#### 3. API Returns 404
+
+**Possible causes**:
+- The slug might be incorrect
+- The API might not be published
+- Check the exact endpoint: `/api/custom-api/your-slug`
+
+#### 4. Filters Not Working
+
+**Check**:
+- Field names are correct (case-sensitive)
+- Operators are properly formatted (e.g., `[$contains]`)
+- Fields are included in the API configuration
+
+#### 5. Performance Issues with Large Datasets
+
+**Optimize by**:
+- Using pagination (`pageSize` parameter)
+- Adding database indexes on filtered fields
+- Limiting the number of fields returned
+- Using specific filters to reduce dataset size
+
+### Debug Mode
+
+Enable debug logging in your Strapi configuration:
+
+```javascript
+// config/server.js
+module.exports = {
+  // ... other config
+  logger: {
+    level: 'debug',
+  }
+};
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how you can help:
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit your changes**: `git commit -m 'Add amazing feature'`
+4. **Push to the branch**: `git push origin feature/amazing-feature`
+5. **Open a Pull Request**
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/vivmagarwal/strapi-plugin-custom-api-builder.git
+
+# Install dependencies
+npm install
+
+# Run tests
+npm test
+
+# Link for local development
+npm link
+
+# In your Strapi project
+npm link strapi-plugin-custom-api
+```
 
 ## 📄 License
 
-MIT License - see LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🤝 Support
+## 🙏 Acknowledgments
 
-Found a bug or need help?
+- Inspired by the legendary Drupal Views module
+- Built for the amazing Strapi community
+- Special thanks to all contributors
+- [@vivmagarwal](https://github.com/vivmagarwal) - Original author
+- [@cjboco](https://github.com/cjboco) - Contributor
 
-- **Issues**: [GitHub Issues](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder/discussions)  
-- **Documentation**: Check `CLAUDE_CODE_GUIDE.md` for detailed troubleshooting
+## 📮 Support
+
+- 📧 Email: vivmagarwal@gmail.com
+- 🐛 Issues: [GitHub Issues](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/vivmagarwal/strapi-plugin-custom-api-builder/discussions)
 
 ---
 
-**Made with ❤️ for the Strapi community**
+**Made with ❤️ by [Vivek M. Agarwal](https://github.com/vivmagarwal)**
+
+*Bringing the power of visual API building to Strapi, one endpoint at a time.*
