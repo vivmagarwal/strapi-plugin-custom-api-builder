@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-custom-api",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Create custom API's from within the Admin dashboard of Strapi.",
   "strapi": {
     "name": "custom-api",
