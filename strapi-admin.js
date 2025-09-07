@@ -1,3 +1,3 @@
-'use strict';
+import adminConfig from './admin/src/index.js';
 
-module.exports = require('./admin/src').default;
+export default adminConfig;

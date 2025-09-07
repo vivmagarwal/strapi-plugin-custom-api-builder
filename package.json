@@ -12,7 +12,9 @@
     "type": "git",
     "url": "https://github.com/vivmagarwal/strapi-plugin-custom-api-builder"
   },
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
   "peerDependencies": {
     "@strapi/strapi": "^5.0.0"
   },
