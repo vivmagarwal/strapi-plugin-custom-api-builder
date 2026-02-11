@@ -1,12 +1,12 @@
 {
   "name": "strapi-plugin-custom-api",
-  "version": "2.1.1",
-  "description": "Create custom API's from within the Admin dashboard of Strapi.",
+  "version": "2.1.2",
+  "description": "Create custom API endpoints from the Strapi admin panel - a visual API builder inspired by Drupal Views.",
   "strapi": {
     "name": "custom-api",
-    "description": "Create custom API's from within the Admin dashboard of Strapi.",
+    "description": "Create custom API endpoints from the Strapi admin panel.",
     "kind": "plugin",
-    "displayName": "Custom Api Builder"
+    "displayName": "Custom API Builder"
   },
   "exports": {
     "./strapi-admin": {
@@ -19,9 +19,19 @@
     },
     "./package.json": "./package.json"
   },
+  "files": [
+    "admin",
+    "server",
+    "utils/helpers.js",
+    "strapi-admin.js",
+    "strapi-server.js"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/vivmagarwal/strapi-plugin-custom-api-builder"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "peerDependencies": {
     "@strapi/strapi": "^5.0.0"
@@ -39,12 +49,17 @@
   "bugs": {
     "url": "https://github.com/vivmagarwal/strapi-plugin-custom-api-builder/issues"
   },
+  "homepage": "https://github.com/vivmagarwal/strapi-plugin-custom-api-builder#readme",
   "keywords": [
     "strapi",
+    "strapi-plugin",
     "plugin",
     "api",
+    "api-builder",
+    "custom-api",
     "visual api builder",
-    "Drupal views for strapi"
+    "rest api",
+    "strapi v5"
   ],
   "license": "MIT"
 }
