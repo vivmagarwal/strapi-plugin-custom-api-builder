@@ -1,4 +1,6 @@
-const slugify = require("../../../../utils/lodash-wrapper.js").kebabCase;
+import { kebabCase } from './helpers';
+import customApiRequest from '../api/custom-api';
+const slugify = kebabCase;
 
 /**
  * Generate a URL-friendly slug from a name
@@ -10,7 +12,7 @@ export const generateSlug = (name) => {
     return '';
   }
 
-  // Use lodash kebabCase to convert to slug format
+  // Use kebabCase to convert to slug format
   let slug = slugify(name.trim());
   
   // Ensure the slug is valid for URLs
@@ -92,20 +94,8 @@ export const checkSlugUniqueness = async (slug, excludeId = null) => {
   }
 
   try {
-    // Build URL with optional excludeId query parameter
-    let url = `/api/custom-api/validate-slug/${encodeURIComponent(slug)}`;
-    if (excludeId) {
-      url += `?excludeId=${encodeURIComponent(excludeId)}`;
-    }
+    const data = await customApiRequest.validateSlug(slug, excludeId);
 
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      throw new Error('Failed to check slug uniqueness');
-    }
-    
-    const data = await response.json();
-    
     return {
       isUnique: data.isUnique,
       conflictingAPIs: data.conflictingAPIs || [],

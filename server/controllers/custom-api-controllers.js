@@ -1,6 +1,6 @@
 "use strict";
 
-const { has, assoc, mapValues, prop, cloneDeepWith } = require("../../utils/lodash-wrapper.js");
+const { has, assoc, mapValues, prop, cloneDeepWith } = require("../../utils/helpers.js");
 const { getConfigObject, getTrimmedStructure } = require("../utils");
 const { parseFilters, validateFilters, buildFilterDocumentation } = require("../utils/filterUtils");
 const { parseSort, validateSort, buildSortDocumentation } = require("../utils/sortUtils");

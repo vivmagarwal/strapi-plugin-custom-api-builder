@@ -8,17 +8,14 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Page } from '@strapi/strapi/admin';
-import pluginId from '../../pluginId';
 import HomePage from '../HomePage/index.jsx';
 
 const App = () => {
   return (
-    <div>
-      <Routes>
-        <Route path={`/plugins/${pluginId}`} element={<HomePage />} />
-        <Route path="*" element={<Page.Error />} />
-      </Routes>
-    </div>
+    <Routes>
+      <Route index element={<HomePage />} />
+      <Route path="*" element={<Page.Error />} />
+    </Routes>
   );
 };
 

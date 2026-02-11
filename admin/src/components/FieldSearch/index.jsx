@@ -1,14 +1,14 @@
 import React, { useState, useCallback } from 'react';
-import { TextInput, Box, Typography, Stack, Badge, Flex } from '@strapi/design-system';
+import { TextInput, Box, Typography, Badge, Flex } from '@strapi/design-system';
 import { Search } from '@strapi/icons';
 
 /**
  * Field search component for filtering large field lists
  * Provides search, type filtering, and field count display
  */
-const FieldSearch = ({ 
-  onSearch, 
-  totalFields = 0, 
+const FieldSearch = ({
+  onSearch,
+  totalFields = 0,
   selectedFields = 0,
   fieldTypes = [],
   onTypeFilter = null,
@@ -33,7 +33,7 @@ const FieldSearch = ({
       newTypes.add(type);
     }
     setSelectedTypes(newTypes);
-    
+
     if (onTypeFilter) {
       onTypeFilter(Array.from(newTypes));
     }
@@ -52,7 +52,7 @@ const FieldSearch = ({
 
   return (
     <Box padding={4} background="neutral0" borderColor="neutral200" hasRadius>
-      <Stack spacing={3}>
+      <Flex direction="column" gap={3} alignItems="stretch">
         <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="sigma" textColor="neutral600">
             Field Selection
@@ -105,7 +105,7 @@ const FieldSearch = ({
             </Flex>
           </Box>
         )}
-      </Stack>
+      </Flex>
     </Box>
   );
 };

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ArrowLeft } from "@strapi/icons";
 import { Check } from "@strapi/icons";
-import { Button, Stack, Box, Grid, GridItem, ContentLayout, HeaderLayout, TextInput, Select, Option, Typography } from "@strapi/design-system";
-const { upperFirst, cloneDeepWith, cloneDeep } = require("../../../../utils/lodash-wrapper.js");
+import { Button, Flex, Box, Grid, TextInput, SingleSelect, SingleSelectOption, Typography } from "@strapi/design-system";
+import { upperFirst, cloneDeepWith, cloneDeep } from '../../utils/helpers';
 import customApiRequest from "../../api/custom-api";
 import {
   fetchContentTypeData,
@@ -229,10 +229,27 @@ const CustomAPICustomizationPage = ({
 
   return (
     <>
-      <HeaderLayout
-        id="title"
-        primaryAction={
-          <Stack horizontal spacing={2}>
+      <Box background="neutral0" paddingTop={6} paddingBottom={6} paddingLeft={10} paddingRight={10}>
+        <Flex direction="column" gap={2} alignItems="stretch">
+          <Button
+            onClick={() => {
+              setShowCustomAPICustomizationPage(false);
+            }}
+            startIcon={<ArrowLeft />}
+            variant="ghost"
+            style={{ paddingLeft: 0, alignSelf: 'flex-start' }}
+          >
+            Back to list
+          </Button>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Flex direction="column" gap={1} alignItems="flex-start">
+              <Typography variant="alpha" as="h1">
+                {upperFirst("Create a custom API")}
+              </Typography>
+              <Typography variant="epsilon" textColor="neutral600">
+                creating a new custom API
+              </Typography>
+            </Flex>
             <Button
               startIcon={<Check />}
               onClick={handleSubmit}
@@ -241,34 +258,20 @@ const CustomAPICustomizationPage = ({
             >
               Save
             </Button>
-          </Stack>
-        }
-        title={upperFirst("Create a custom API")}
-        subtitle="creating a new custom API"
-        navigationAction={
-          <Button
-            onClick={() => {
-              setShowCustomAPICustomizationPage(false);
-            }}
-            startIcon={<ArrowLeft />}
-            variant="ghost"
-            style={{ paddingLeft: 0 }}
-          >
-            Back to list
-          </Button>
-        }
-      />
+          </Flex>
+        </Flex>
+      </Box>
 
-      <ContentLayout>
-        <Stack spacing={4}>
+      <Box paddingLeft={10} paddingRight={10}>
+        <Flex direction="column" gap={4} alignItems="stretch">
           <Box
             padding={10}
             background="neutral0"
             shadow="filterShadow"
             hasRadius
           >
-            <Grid gap={6}>
-              <GridItem col={6} s={12}>
+            <Grid.Root gap={6}>
+              <Grid.Item col={6} s={12}>
                 <TextInput
                   placeholder="A descriptive name"
                   label="Custom API Name"
@@ -277,9 +280,9 @@ const CustomAPICustomizationPage = ({
                   onChange={(e) => setName(e.target.value)}
                   value={name}
                 />
-              </GridItem>
+              </Grid.Item>
 
-              <GridItem col={6} s={12}>
+              <Grid.Item col={6} s={12}>
                 <SlugInput
                   name="slug"
                   value={slug}
@@ -292,10 +295,10 @@ const CustomAPICustomizationPage = ({
                   required={true}
                   excludeId={showCustomAPICustomizationPage?.id}
                 />
-              </GridItem>
-            </Grid>
+              </Grid.Item>
+            </Grid.Root>
           </Box>
-        </Stack>
+        </Flex>
 
         <Box
           padding={10}
@@ -306,12 +309,12 @@ const CustomAPICustomizationPage = ({
             marginTop: 10,
           }}
         >
-          <Stack spacing={11}>
+          <Flex direction="column" gap={4} alignItems="stretch">
             <Typography variant="beta">
               The selected Content Type is:{" "}
               {selectedContentType ? selectedContentType.displayName : ""}
             </Typography>
-            <Select
+            <SingleSelect
               id="select1"
               label="Choose the content-type"
               required
@@ -338,13 +341,13 @@ const CustomAPICustomizationPage = ({
                 contentTypes.length &&
                 contentTypes.map((item) => {
                   return (
-                    <Option key={item.uid} value={item.uid}>
+                    <SingleSelectOption key={item.uid} value={item.uid}>
                       {item.displayName}
-                    </Option>
+                    </SingleSelectOption>
                   );
                 })}
-            </Select>
-          </Stack>
+            </SingleSelect>
+          </Flex>
         </Box>
 
         <Box
@@ -373,7 +376,7 @@ const CustomAPICustomizationPage = ({
               );
             })}
         </Box>
-      </ContentLayout>
+      </Box>
     </>
   );
 };

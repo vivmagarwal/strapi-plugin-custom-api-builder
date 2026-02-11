@@ -7,15 +7,15 @@ import {
   Tr,
   Td,
   Th,
-} from "@strapi/design-system/Table";
-import { Box } from "@strapi/design-system/Box";
-import { Flex } from "@strapi/design-system/Flex";
-import { Button } from "@strapi/design-system/Button";
-import { Typography } from "@strapi/design-system/Typography";
-import { IconButton } from "@strapi/design-system/IconButton";
-import { VisuallyHidden } from "@strapi/design-system/VisuallyHidden";
-import { BaseCheckbox } from "@strapi/design-system/BaseCheckbox";
-import { TextInput } from "@strapi/design-system/TextInput";
+  Box,
+  Flex,
+  Button,
+  Typography,
+  IconButton,
+  VisuallyHidden,
+  Checkbox,
+  TextInput,
+} from "@strapi/design-system";
 import { Eye as Show } from '@strapi/icons';
 import { Pencil } from "@strapi/icons";
 import { Trash } from "@strapi/icons";
@@ -33,9 +33,9 @@ function CustomAPICheckbox({ value, checkboxID, callback, disabled }) {
   }
 
   return (
-    <BaseCheckbox
+    <Checkbox
       checked={isChecked}
-      onChange={handleChange}
+      onCheckedChange={handleChange}
       disabled={disabled}
     />
   );
@@ -121,29 +121,33 @@ export default function CustomAPITable({
 
                 <Td>
                   <Flex style={{ justifyContent: "end" }}>
-                    <IconButton onClick={(e) => {
+                    <IconButton
+                      onClick={(e) => {
                         e.preventDefault();
                         openWithNewTab(`/custom-api/${customAPI.slug}`);
                       }}
-                      noBorder
-                      icon={<Show />}
-                      label={'Open target'}
-                    />
+                      variant="ghost"
+                      label="Open target"
+                    >
+                      <Show />
+                    </IconButton>
 
                     <IconButton
                       onClick={() => editCustomAPI(customAPI.id)}
                       label="Edit"
-                      noBorder
-                      icon={<Pencil />}
-                    />
+                      variant="ghost"
+                    >
+                      <Pencil />
+                    </IconButton>
 
                     <Box paddingLeft={1}>
                       <IconButton
                         onClick={() => deleteCustomAPI(customAPI)}
                         label="Delete"
-                        noBorder
-                        icon={<Trash />}
-                      />
+                        variant="ghost"
+                      >
+                        <Trash />
+                      </IconButton>
                     </Box>
                   </Flex>
                 </Td>

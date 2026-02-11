@@ -1,11 +1,9 @@
-const { startsWith } = require("../../../utils/lodash-wrapper.js");
-
 const openWithNewTab = (path) => {
   const url = (() => {
-    if (startsWith(path, '/')) {
+    if (path.startsWith('/')) {
       return `${strapi.backendURL}${path}`;
     }
-    if (startsWith(path, 'https') || startsWith(path, 'http')) {
+    if (path.startsWith('https') || path.startsWith('http')) {
       return path;
     }
 

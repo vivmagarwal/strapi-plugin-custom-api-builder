@@ -4,11 +4,11 @@
  *
  */
 
-import React, { memo, useState, useEffect, useMemo, useCallback } from "react";
-import { Layout, ContentLayout, BaseHeaderLayout, HeaderLayout, EmptyStateLayout, Button, Stack } from "@strapi/design-system";
+import React, { memo, useState, useEffect } from "react";
+import { Main, EmptyStateLayout, Button, Flex, Box, Typography } from "@strapi/design-system";
 import { Page } from "@strapi/strapi/admin";
 import { Plus } from "@strapi/icons";
-const { upperFirst } = require("../../../../utils/lodash-wrapper.js");
+import { upperFirst } from '../../utils/helpers';
 import { Illo } from "../../components/Illo/index.jsx";
 import CustomAPITable from "../../components/CustomAPITable/index.jsx";
 import CustomAPICustomizationPage from "../CustomAPICustomizationPage";
@@ -50,14 +50,19 @@ const HomePage = () => {
   }
 
   return (
-    <Layout>
-      <BaseHeaderLayout
-        title="Custom API Builder Plugin"
-        subtitle="Visually build a custom API endpoint for any content type with fields nested any level deep"
-        as="h2"
-      />
+    <Main>
+      <Box background="neutral0" paddingTop={6} paddingBottom={6} paddingLeft={10} paddingRight={10}>
+        <Flex direction="column" gap={1} alignItems="flex-start">
+          <Typography variant="alpha" as="h2">
+            Custom API Builder Plugin
+          </Typography>
+          <Typography variant="epsilon" textColor="neutral600">
+            Visually build a custom API endpoint for any content type with fields nested any level deep
+          </Typography>
+        </Flex>
+      </Box>
 
-      <ContentLayout>
+      <Box paddingLeft={10} paddingRight={10}>
         {customAPIData.length === 0 && !showCustomAPICustomizationPage && (
           <div>
             <EmptyStateLayout
@@ -85,29 +90,32 @@ const HomePage = () => {
 
         {customAPIData.length > 0 && !showCustomAPICustomizationPage && (
           <>
-            <HeaderLayout
-              id="title"
-              primaryAction={
-                <Stack horizontal spacing={2}>
-                  <Button
-                    startIcon={<Plus />}
-                    onClick={() => {
-                      setShowCustomAPICustomizationPage({ id: null });
-                    }}
-                    type="submit"
-                    disabled={false}
-                  >
-                    Create new custom API
-                  </Button>
-                </Stack>
-              }
-              title={upperFirst(
-                `custom  API${customAPIData.length > 1 ? "s" : ""}`
-              )}
-              subtitle={`${customAPIData.length} ${customAPIData.length > 1 ? "entries" : "entry"
-                } found`}
-            />
-            <ContentLayout>
+            <Box background="neutral0" paddingTop={6} paddingBottom={6} paddingLeft={10} paddingRight={10}>
+              <Flex justifyContent="space-between" alignItems="center">
+                <Flex direction="column" gap={1} alignItems="flex-start">
+                  <Typography variant="alpha" as="h1">
+                    {upperFirst(
+                      `custom  API${customAPIData.length > 1 ? "s" : ""}`
+                    )}
+                  </Typography>
+                  <Typography variant="epsilon" textColor="neutral600">
+                    {`${customAPIData.length} ${customAPIData.length > 1 ? "entries" : "entry"
+                      } found`}
+                  </Typography>
+                </Flex>
+                <Button
+                  startIcon={<Plus />}
+                  onClick={() => {
+                    setShowCustomAPICustomizationPage({ id: null });
+                  }}
+                  type="submit"
+                  disabled={false}
+                >
+                  Create new custom API
+                </Button>
+              </Flex>
+            </Box>
+            <Box paddingLeft={10} paddingRight={10}>
               <CustomAPITable
                 customAPIData={customAPIData}
                 setShowCustomAPICustomizationPage={
@@ -116,7 +124,7 @@ const HomePage = () => {
                 deleteCustomAPI={deleteCustomAPI}
                 editCustomAPI={editCustomAPI}
               />
-            </ContentLayout>
+            </Box>
           </>
         )}
 
@@ -130,8 +138,8 @@ const HomePage = () => {
             fetchData={fetchData}
           />
         )}
-      </ContentLayout>
-    </Layout>
+      </Box>
+    </Main>
   );
 };
 

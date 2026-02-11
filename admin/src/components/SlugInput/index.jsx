@@ -1,16 +1,23 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { TextInput, Field, FieldLabel, FieldInput, FieldHint, FieldError, Stack, Button, Flex } from '@strapi/design-system';
-import { Refresh, Check, Cross } from '@strapi/icons';
+import { TextInput, Field, Flex, Button } from '@strapi/design-system';
+import { ArrowClockwise, Check, Cross } from '@strapi/icons';
 import { generateSlug, validateSlug, checkSlugUniqueness, generateUniqueSlug } from '../../utils/slugUtils';
-import { debounce } from '../../../../../utils/lodash-wrapper.js';
 
-const SlugInput = ({ 
-  name, 
-  value, 
-  onChange, 
-  label, 
-  placeholder, 
-  hint, 
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+const SlugInput = ({
+  name,
+  value,
+  onChange,
+  label,
+  placeholder,
+  hint,
   required = false,
   sourceName = '',
   autoGenerate = true,
@@ -44,7 +51,7 @@ const SlugInput = ({
 
       // Format validation
       const formatValidation = validateSlug(slug);
-      
+
       // Uniqueness validation
       let uniquenessValidation = { isUnique: true, error: null };
       if (formatValidation.isValid) {
@@ -108,29 +115,29 @@ const SlugInput = ({
   const getValidationIcon = () => {
     if (isValidating) return null;
     if (!slugValue) return null;
-    
+
     const hasErrors = !validationState.isValid || !validationState.isUnique;
     return hasErrors ? <Cross /> : <Check />;
   };
 
   const getValidationColor = () => {
     if (isValidating || !slugValue) return undefined;
-    
+
     const hasErrors = !validationState.isValid || !validationState.isUnique;
     return hasErrors ? 'danger600' : 'success600';
   };
 
   const getAllErrors = () => {
     const allErrors = [...validationState.errors];
-    
+
     if (!validationState.isUnique) {
       allErrors.push('This slug is already in use. Please choose a different one.');
     }
-    
+
     if (validationState.uniquenessError) {
       allErrors.push(validationState.uniquenessError);
     }
-    
+
     return allErrors;
   };
 
@@ -138,16 +145,16 @@ const SlugInput = ({
   const allErrors = getAllErrors();
 
   return (
-    <Field name={name} error={hasErrors ? allErrors[0] : undefined}>
-      <Stack spacing={1}>
+    <Field.Root name={name} error={hasErrors ? allErrors[0] : undefined}>
+      <Flex direction="column" gap={1} alignItems="stretch">
         <Flex justifyContent="space-between" alignItems="center">
-          <FieldLabel required={required}>{label}</FieldLabel>
+          <Field.Label required={required}>{label}</Field.Label>
           {autoGenerate && sourceName && (
             <Button
               type="button"
               variant="tertiary"
               size="S"
-              startIcon={<Refresh />}
+              startIcon={<ArrowClockwise />}
               onClick={handleGenerateSlug}
               loading={isGenerating}
               disabled={!sourceName}
@@ -156,41 +163,42 @@ const SlugInput = ({
             </Button>
           )}
         </Flex>
-        
-        <FieldInput>
+
+        <Flex gap={2} alignItems="center">
           <TextInput
             name={name}
             placeholder={placeholder}
             value={slugValue}
             onChange={handleSlugChange}
-            error={hasErrors}
-            endAction={getValidationIcon()}
+            aria-invalid={hasErrors}
+            style={{ flex: 1 }}
           />
-        </FieldInput>
+          {getValidationIcon()}
+        </Flex>
 
-        {hint && <FieldHint>{hint}</FieldHint>}
-        
+        {hint && <Field.Hint>{hint}</Field.Hint>}
+
         {slugValue && (
-          <FieldHint>
+          <Field.Hint>
             Your API will be available at: <code>/api/custom-api/{slugValue}</code>
-          </FieldHint>
+          </Field.Hint>
         )}
 
         {isValidating && (
-          <FieldHint>Validating slug...</FieldHint>
+          <Field.Hint>Validating slug...</Field.Hint>
         )}
 
         {hasErrors && allErrors.length > 0 && (
-          <FieldError>
-            <Stack spacing={1}>
+          <Field.Error>
+            <Flex direction="column" gap={1} alignItems="stretch">
               {allErrors.map((error, index) => (
                 <div key={index}>{error}</div>
               ))}
-            </Stack>
-          </FieldError>
+            </Flex>
+          </Field.Error>
         )}
-      </Stack>
-    </Field>
+      </Flex>
+    </Field.Root>
   );
 };
 

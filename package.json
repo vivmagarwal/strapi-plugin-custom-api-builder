@@ -8,6 +8,17 @@
     "kind": "plugin",
     "displayName": "Custom Api Builder"
   },
+  "exports": {
+    "./strapi-admin": {
+      "source": "./admin/src/index.jsx",
+      "default": "./admin/src/index.jsx"
+    },
+    "./strapi-server": {
+      "source": "./server/index.js",
+      "default": "./server/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/vivmagarwal/strapi-plugin-custom-api-builder"

@@ -1,13 +1,10 @@
 import React from 'react';
-import { Box } from '@strapi/design-system/Box';
-import { Typography } from '@strapi/design-system/Typography';
-import { Stack } from '@strapi/design-system/Stack';
-import { Checkbox } from '@strapi/design-system/Checkbox';
+import { Box, Typography, Flex, Checkbox } from '@strapi/design-system';
 
 const RenderDeeplyNestedObject = ({ data, toggleSelectedOfField, toggleSelectedOfMedia, toggleSelectedOfComponent, toggleSelectedOfDynamicZone }) => {
   return (
     <Box padding={4} background="neutral100" shadow="filterShadow" hasRadius>
-      <Stack spacing={2}>
+      <Flex direction="column" gap={2} alignItems="stretch">
         <Typography variant="delta">{data.table}</Typography>
 
         {/* Render Fields */}
@@ -18,7 +15,7 @@ const RenderDeeplyNestedObject = ({ data, toggleSelectedOfField, toggleSelectedO
               <Checkbox
                 key={field.name}
                 name={field.name}
-                onChange={() => toggleSelectedOfField(data.table, field.name)}
+                onCheckedChange={() => toggleSelectedOfField(data.table, field.name)}
                 checked={field.selected}
               >
                 {field.name}
@@ -35,7 +32,7 @@ const RenderDeeplyNestedObject = ({ data, toggleSelectedOfField, toggleSelectedO
               <Checkbox
                 key={media.name}
                 name={media.name}
-                onChange={() => toggleSelectedOfMedia(data.table, media.name)}
+                onCheckedChange={() => toggleSelectedOfMedia(data.table, media.name)}
                 checked={media.selected}
               >
                 {media.name}
@@ -52,7 +49,7 @@ const RenderDeeplyNestedObject = ({ data, toggleSelectedOfField, toggleSelectedO
               <Checkbox
                 key={component.name}
                 name={component.name}
-                onChange={() => toggleSelectedOfComponent(data.table, component.name)}
+                onCheckedChange={() => toggleSelectedOfComponent(data.table, component.name)}
                 checked={component.selected}
               >
                 {component.name}
@@ -69,7 +66,7 @@ const RenderDeeplyNestedObject = ({ data, toggleSelectedOfField, toggleSelectedO
               <Checkbox
                 key={dynamiczone.name}
                 name={dynamiczone.name}
-                onChange={() => toggleSelectedOfDynamicZone(data.table, dynamiczone.name)}
+                onCheckedChange={() => toggleSelectedOfDynamicZone(data.table, dynamiczone.name)}
                 checked={dynamiczone.selected}
               >
                 {dynamiczone.name}
@@ -93,7 +90,7 @@ const RenderDeeplyNestedObject = ({ data, toggleSelectedOfField, toggleSelectedO
             ))}
           </Box>
         )}
-      </Stack>
+      </Flex>
     </Box>
   );
 };

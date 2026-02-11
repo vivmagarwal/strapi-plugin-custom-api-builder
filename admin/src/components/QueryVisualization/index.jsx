@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import { Box, Typography, Stack, Badge, Flex, Button, Code } from '@strapi/design-system';
-import { Eye, EyeStriked, Copy, Check } from '@strapi/icons';
+import { Box, Typography, Badge, Flex, Button } from '@strapi/design-system';
+import { Eye, EyeStriked, Duplicate, Check } from '@strapi/icons';
+
+const codeStyle = {
+  padding: '4px 8px',
+  background: '#f0f0ff',
+  borderRadius: '4px',
+  fontFamily: 'monospace',
+  fontSize: '13px',
+};
 
 /**
  * Query Visualization Component
  * Shows the constructed query, API endpoint, and example responses
  */
-const QueryVisualization = ({ 
+const QueryVisualization = ({
   apiEndpoint = '',
   queryConfig = {},
   exampleResponse = null,
@@ -28,7 +36,7 @@ const QueryVisualization = ({
   const generateCurlCommand = () => {
     const baseUrl = window.location.origin;
     let url = `${baseUrl}${apiEndpoint}`;
-    
+
     // Add example query parameters
     const params = [];
     if (queryConfig.filters) {
@@ -40,7 +48,7 @@ const QueryVisualization = ({
     if (queryConfig.pagination) {
       params.push('page=1&pageSize=25');
     }
-    
+
     if (params.length > 0) {
       url += '?' + params.join('&');
     }
@@ -80,7 +88,7 @@ const filteredResponse = await fetch(url, {
 
   return (
     <Box padding={4} background="neutral0" borderColor="neutral200" hasRadius>
-      <Stack spacing={4}>
+      <Flex direction="column" gap={4} alignItems="stretch">
         <Flex justifyContent="space-between" alignItems="center">
           <Typography variant="sigma" textColor="neutral600">
             Query Visualization
@@ -99,14 +107,14 @@ const filteredResponse = await fetch(url, {
             API Endpoint
           </Typography>
           <Flex gap={2} alignItems="center">
-            <Code>
+            <code style={codeStyle}>
               GET {apiEndpoint || '/api/custom-api/[slug]'}
-            </Code>
+            </code>
             <Button
               variant="ghost"
               size="S"
               onClick={() => handleCopy(apiEndpoint, 'endpoint')}
-              startIcon={copiedItem === 'endpoint' ? <Check /> : <Copy />}
+              startIcon={copiedItem === 'endpoint' ? <Check /> : <Duplicate />}
             >
               {copiedItem === 'endpoint' ? 'Copied!' : 'Copy'}
             </Button>
@@ -121,8 +129,8 @@ const filteredResponse = await fetch(url, {
                   Query Configuration
                 </Typography>
                 <Box background="neutral100" padding={3} hasRadius>
-                  <pre style={{ 
-                    margin: 0, 
+                  <pre style={{
+                    margin: 0,
                     fontSize: '12px',
                     fontFamily: 'monospace',
                     overflow: 'auto'
@@ -135,7 +143,7 @@ const filteredResponse = await fetch(url, {
                   size="S"
                   marginTop={2}
                   onClick={() => handleCopy(formatQuery(queryConfig), 'query')}
-                  startIcon={copiedItem === 'query' ? <Check /> : <Copy />}
+                  startIcon={copiedItem === 'query' ? <Check /> : <Duplicate />}
                 >
                   {copiedItem === 'query' ? 'Copied!' : 'Copy Query'}
                 </Button>
@@ -147,8 +155,8 @@ const filteredResponse = await fetch(url, {
                 Example cURL Command
               </Typography>
               <Box background="neutral100" padding={3} hasRadius>
-                <pre style={{ 
-                  margin: 0, 
+                <pre style={{
+                  margin: 0,
                   fontSize: '12px',
                   fontFamily: 'monospace',
                   overflow: 'auto'
@@ -161,7 +169,7 @@ const filteredResponse = await fetch(url, {
                 size="S"
                 marginTop={2}
                 onClick={() => handleCopy(generateCurlCommand(), 'curl')}
-                startIcon={copiedItem === 'curl' ? <Check /> : <Copy />}
+                startIcon={copiedItem === 'curl' ? <Check /> : <Duplicate />}
               >
                 {copiedItem === 'curl' ? 'Copied!' : 'Copy cURL'}
               </Button>
@@ -172,8 +180,8 @@ const filteredResponse = await fetch(url, {
                 JavaScript Example
               </Typography>
               <Box background="neutral100" padding={3} hasRadius>
-                <pre style={{ 
-                  margin: 0, 
+                <pre style={{
+                  margin: 0,
                   fontSize: '12px',
                   fontFamily: 'monospace',
                   overflow: 'auto',
@@ -187,7 +195,7 @@ const filteredResponse = await fetch(url, {
                 size="S"
                 marginTop={2}
                 onClick={() => handleCopy(generateJavaScriptExample(), 'js')}
-                startIcon={copiedItem === 'js' ? <Check /> : <Copy />}
+                startIcon={copiedItem === 'js' ? <Check /> : <Duplicate />}
               >
                 {copiedItem === 'js' ? 'Copied!' : 'Copy JavaScript'}
               </Button>
@@ -199,8 +207,8 @@ const filteredResponse = await fetch(url, {
                   Example Response
                 </Typography>
                 <Box background="neutral100" padding={3} hasRadius>
-                  <pre style={{ 
-                    margin: 0, 
+                  <pre style={{
+                    margin: 0,
                     fontSize: '12px',
                     fontFamily: 'monospace',
                     overflow: 'auto',
@@ -227,7 +235,7 @@ const filteredResponse = await fetch(url, {
             <Badge active>Media Support</Badge>
           </Flex>
         </Box>
-      </Stack>
+      </Flex>
     </Box>
   );
 };

@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { Box } from "@strapi/design-system/Box";
-import { Checkbox } from "@strapi/design-system/Checkbox";
+import React, { useState } from "react";
+import { Box, Checkbox } from "@strapi/design-system";
 
 export function FieldsCheckbox({ table, field, toggleSelectedOfField }) {
   const [val, setValue] = useState(field.selected);
 
   return (
-    <Box>
+    <Box paddingTop={1} paddingBottom={1}>
       <Checkbox
         aria-label="fields checkbox"
         name={`base-checkbox-${table}-${field.name}`}
         id={`base-checkbox-${table}-${field.name}`}
-        onValueChange={(value) => {
-          setValue(value);
+        onCheckedChange={(checked) => {
+          setValue(checked);
           toggleSelectedOfField(table, field.name);
         }}
-        value={val}
+        checked={val}
         disabled={field.name === "id"}
       >
         {field.name}

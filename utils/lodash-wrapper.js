@@ -17,6 +17,7 @@ module.exports = {
   has: _.has,
   isEqual: _.isEqual,
   startsWith: _.startsWith,
+  debounce: _.debounce,
   
   // Lodash/fp style functions
   assoc: _.set, // lodash/fp assoc is similar to lodash set
