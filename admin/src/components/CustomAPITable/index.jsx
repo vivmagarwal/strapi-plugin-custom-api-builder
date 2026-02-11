@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   Thead,
@@ -9,12 +9,10 @@ import {
   Th,
   Box,
   Flex,
-  Button,
   Typography,
   IconButton,
   VisuallyHidden,
-  Checkbox,
-  TextInput,
+  Badge,
 } from "@strapi/design-system";
 import { Eye as Show } from '@strapi/icons';
 import { Pencil } from "@strapi/icons";
@@ -22,35 +20,24 @@ import { Trash } from "@strapi/icons";
 import { Plus } from "@strapi/icons";
 import openWithNewTab from '../../utils/openWithNewTab';
 
-function CustomAPICheckbox({ value, checkboxID, callback, disabled }) {
-  const [isChecked, setIsChecked] = useState(value);
-
-  function handleChange() {
-    setIsChecked(!isChecked);
-    {
-      callback && callback({ id: checkboxID, value: !isChecked });
+function countSelectedFields(structure) {
+  if (!structure || !structure.populate || !Array.isArray(structure.populate)) return 0;
+  let count = 0;
+  function walk(data) {
+    const categories = ['fields', 'media', 'components', 'dynamiczones'];
+    categories.forEach((cat) => {
+      if (data[cat] && data[cat].length > 0) {
+        data[cat].forEach((item) => {
+          if (item.selected) count++;
+        });
+      }
+    });
+    if (data.populate && Array.isArray(data.populate)) {
+      data.populate.forEach(walk);
     }
   }
-
-  return (
-    <Checkbox
-      checked={isChecked}
-      onCheckedChange={handleChange}
-      disabled={disabled}
-    />
-  );
-}
-
-function CustomAPIInput({ value, onChange }) {
-  return (
-    <TextInput
-      type="text"
-      aria-label="customAPI-input"
-      name="customAPI-input"
-      onChange={onChange}
-      value={value}
-    />
-  );
+  structure.populate.forEach(walk);
+  return count;
 }
 
 export default function CustomAPITable({
@@ -68,11 +55,11 @@ export default function CustomAPITable({
       style={{ marginTop: "10px" }}
     >
       <Table
-        colCount={4}
-        rowCount={10}
+        colCount={6}
+        rowCount={customAPIData.length}
         footer={
           <TFooter
-            onClick={() => setShowCustomAPICustomizationPage(true)}
+            onClick={() => setShowCustomAPICustomizationPage({ id: null })}
             icon={<Plus />}
           >
             Add a CustomAPI
@@ -90,7 +77,15 @@ export default function CustomAPITable({
             </Th>
 
             <Th>
-              <Typography variant="sigma">Slug</Typography>
+              <Typography variant="sigma">Content Type</Typography>
+            </Th>
+
+            <Th>
+              <Typography variant="sigma">Endpoint</Typography>
+            </Th>
+
+            <Th>
+              <Typography variant="sigma">Fields</Typography>
             </Th>
 
             <Th>
@@ -101,6 +96,7 @@ export default function CustomAPITable({
 
         <Tbody>
           {customAPIData.map((customAPI) => {
+            const fieldCount = countSelectedFields(customAPI.structure);
             return (
               <Tr key={customAPI.id}>
                 <Td>
@@ -115,8 +111,24 @@ export default function CustomAPITable({
 
                 <Td>
                   <Typography textColor="neutral800">
-                    {customAPI.slug}
+                    {customAPI.selectedContentType?.displayName || '-'}
                   </Typography>
+                </Td>
+
+                <Td>
+                  <code style={{
+                    fontFamily: 'monospace',
+                    fontSize: '13px',
+                    padding: '2px 6px',
+                    background: '#f0f0ff',
+                    borderRadius: '4px',
+                  }}>
+                    /custom-api/{customAPI.slug}
+                  </code>
+                </Td>
+
+                <Td>
+                  <Badge>{fieldCount}</Badge>
                 </Td>
 
                 <Td>
@@ -133,7 +145,7 @@ export default function CustomAPITable({
                     </IconButton>
 
                     <IconButton
-                      onClick={() => editCustomAPI(customAPI.id)}
+                      onClick={() => editCustomAPI(customAPI.documentId)}
                       label="Edit"
                       variant="ghost"
                     >

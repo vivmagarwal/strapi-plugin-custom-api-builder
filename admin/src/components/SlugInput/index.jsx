@@ -180,7 +180,7 @@ const SlugInput = ({
 
         {slugValue && (
           <Field.Hint>
-            Your API will be available at: <code>/api/custom-api/{slugValue}</code>
+            Your API will be available at: <code>/custom-api/{slugValue}</code>
           </Field.Hint>
         )}
 

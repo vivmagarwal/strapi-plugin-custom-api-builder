@@ -5,9 +5,9 @@
  */
 
 import React, { memo, useState, useEffect } from "react";
-import { Main, EmptyStateLayout, Button, Flex, Box, Typography } from "@strapi/design-system";
+import { Main, EmptyStateLayout, Button, Flex, Box, Typography, Dialog, Alert } from "@strapi/design-system";
 import { Page } from "@strapi/strapi/admin";
-import { Plus } from "@strapi/icons";
+import { Plus, WarningCircle } from "@strapi/icons";
 import { upperFirst } from '../../utils/helpers';
 import { Illo } from "../../components/Illo/index.jsx";
 import CustomAPITable from "../../components/CustomAPITable/index.jsx";
@@ -18,9 +18,14 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [customAPIData, setCustomAPIData] = useState([]);
   const [contentTypeCount, setContentTypeCount] = useState(0);
+  const [showCustomAPICustomizationPage, setShowCustomAPICustomizationPage] = useState(false);
 
-  const [showCustomAPICustomizationPage, setShowCustomAPICustomizationPage] =
-    useState(false);
+  // Delete dialog state
+  const [apiToDelete, setApiToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Feedback alert state
+  const [feedback, setFeedback] = useState(null);
 
   const fetchData = async () => {
     if (isLoading === false) setIsLoading(true);
@@ -37,12 +42,34 @@ const HomePage = () => {
     fetchData();
   }, []);
 
-  async function deleteCustomAPI() {
-    alert("Add functionality to delete the API");
+  function showDeleteDialog(api) {
+    setApiToDelete(api);
+  }
+
+  async function confirmDelete() {
+    if (!apiToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      await customApiRequest.deleteCustomApi(apiToDelete.documentId);
+      setFeedback({ type: 'success', message: `"${apiToDelete.name}" has been deleted successfully.` });
+      setApiToDelete(null);
+      await fetchData();
+    } catch (error) {
+      console.error("Delete error:", error);
+      setFeedback({ type: 'danger', message: `Failed to delete "${apiToDelete.name}". ${error.message || 'Please try again.'}` });
+      setApiToDelete(null);
+    } finally {
+      setIsDeleting(false);
+    }
   }
 
   async function editCustomAPI(id) {
     setShowCustomAPICustomizationPage({ id: id });
+  }
+
+  function handleFeedback(type, message) {
+    setFeedback({ type, message });
   }
 
   if (isLoading) {
@@ -63,14 +90,28 @@ const HomePage = () => {
       </Box>
 
       <Box paddingLeft={10} paddingRight={10}>
+        {/* Feedback Alert */}
+        {feedback && (
+          <Box paddingBottom={4}>
+            <Alert
+              title={feedback.type === 'success' ? 'Success' : 'Error'}
+              variant={feedback.type}
+              closeLabel="Dismiss"
+              onClose={() => setFeedback(null)}
+            >
+              {feedback.message}
+            </Alert>
+          </Box>
+        )}
+
         {customAPIData.length === 0 && !showCustomAPICustomizationPage && (
           <div>
             <EmptyStateLayout
               icon={<Illo />}
               content={
                 !!!contentTypeCount
-                  ? "You require at least 1 collection type to proceed, Content-Type builder -> Create new collection type"
-                  : "You don't have any custom API yet"
+                  ? "You require at least 1 collection type to proceed. Go to Content-Type Builder and create a new collection type."
+                  : "No custom APIs have been created yet. Create your first custom API to get started."
               }
               action={
                 <Button
@@ -121,7 +162,7 @@ const HomePage = () => {
                 setShowCustomAPICustomizationPage={
                   setShowCustomAPICustomizationPage
                 }
-                deleteCustomAPI={deleteCustomAPI}
+                deleteCustomAPI={showDeleteDialog}
                 editCustomAPI={editCustomAPI}
               />
             </Box>
@@ -130,15 +171,37 @@ const HomePage = () => {
 
         {showCustomAPICustomizationPage && (
           <CustomAPICustomizationPage
+            key={showCustomAPICustomizationPage?.id || 'new'}
             showCustomAPICustomizationPage={showCustomAPICustomizationPage}
             setShowCustomAPICustomizationPage={
               setShowCustomAPICustomizationPage
             }
             isLoading={isLoading}
             fetchData={fetchData}
+            onFeedback={handleFeedback}
           />
         )}
       </Box>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog.Root open={!!apiToDelete} onOpenChange={(open) => { if (!open) setApiToDelete(null); }}>
+        <Dialog.Content>
+          <Dialog.Header>Delete Custom API</Dialog.Header>
+          <Dialog.Body icon={<WarningCircle fill="danger600" />}>
+            Are you sure you want to delete "{apiToDelete?.name}"? This action cannot be undone.
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Dialog.Cancel>
+              <Button variant="tertiary" disabled={isDeleting}>Cancel</Button>
+            </Dialog.Cancel>
+            <Dialog.Action>
+              <Button variant="danger" onClick={confirmDelete} loading={isDeleting}>
+                Delete
+              </Button>
+            </Dialog.Action>
+          </Dialog.Footer>
+        </Dialog.Content>
+      </Dialog.Root>
     </Main>
   );
 };

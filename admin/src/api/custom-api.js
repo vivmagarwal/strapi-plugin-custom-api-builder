@@ -1,6 +1,6 @@
 import { getFetchClient } from "@strapi/strapi/admin";
 
-const { get, post, put } = getFetchClient();
+const { get, post, put, del } = getFetchClient();
 
 // In Strapi v5, getFetchClient returns axios-style responses: { data, status, headers }.
 // We extract .data so callers get the response body directly.
@@ -22,6 +22,11 @@ const customApiRequest = {
 
   updateCustomApi: async (id, body) => {
     const { data } = await put(`/custom-api/update/${id}`, { data: body });
+    return data;
+  },
+
+  deleteCustomApi: async (id) => {
+    const { data } = await del(`/custom-api/delete/${id}`);
     return data;
   },
 

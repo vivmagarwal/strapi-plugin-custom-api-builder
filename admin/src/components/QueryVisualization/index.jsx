@@ -10,10 +10,6 @@ const codeStyle = {
   fontSize: '13px',
 };
 
-/**
- * Query Visualization Component
- * Shows the constructed query, API endpoint, and example responses
- */
 const QueryVisualization = ({
   apiEndpoint = '',
   queryConfig = {},
@@ -37,7 +33,6 @@ const QueryVisualization = ({
     const baseUrl = window.location.origin;
     let url = `${baseUrl}${apiEndpoint}`;
 
-    // Add example query parameters
     const params = [];
     if (queryConfig.filters) {
       params.push('name[$contains]=example');
@@ -103,12 +98,12 @@ const filteredResponse = await fetch(url, {
         </Flex>
 
         <Box>
-          <Typography variant="omega" textColor="neutral600" as="p" marginBottom={2}>
+          <Typography variant="omega" textColor="neutral600" as="p">
             API Endpoint
           </Typography>
-          <Flex gap={2} alignItems="center">
+          <Flex gap={2} alignItems="center" paddingTop={1}>
             <code style={codeStyle}>
-              GET {apiEndpoint || '/api/custom-api/[slug]'}
+              GET {apiEndpoint || '/custom-api/[slug]'}
             </code>
             <Button
               variant="ghost"
@@ -125,10 +120,10 @@ const filteredResponse = await fetch(url, {
           <>
             {showRawQuery && queryConfig && Object.keys(queryConfig).length > 0 && (
               <Box>
-                <Typography variant="omega" textColor="neutral600" as="p" marginBottom={2}>
+                <Typography variant="omega" textColor="neutral600" as="p">
                   Query Configuration
                 </Typography>
-                <Box background="neutral100" padding={3} hasRadius>
+                <Box background="neutral100" padding={3} hasRadius marginTop={1}>
                   <pre style={{
                     margin: 0,
                     fontSize: '12px',
@@ -138,23 +133,24 @@ const filteredResponse = await fetch(url, {
                     {formatQuery(queryConfig)}
                   </pre>
                 </Box>
-                <Button
-                  variant="ghost"
-                  size="S"
-                  marginTop={2}
-                  onClick={() => handleCopy(formatQuery(queryConfig), 'query')}
-                  startIcon={copiedItem === 'query' ? <Check /> : <Duplicate />}
-                >
-                  {copiedItem === 'query' ? 'Copied!' : 'Copy Query'}
-                </Button>
+                <Box paddingTop={1}>
+                  <Button
+                    variant="ghost"
+                    size="S"
+                    onClick={() => handleCopy(formatQuery(queryConfig), 'query')}
+                    startIcon={copiedItem === 'query' ? <Check /> : <Duplicate />}
+                  >
+                    {copiedItem === 'query' ? 'Copied!' : 'Copy Query'}
+                  </Button>
+                </Box>
               </Box>
             )}
 
             <Box>
-              <Typography variant="omega" textColor="neutral600" as="p" marginBottom={2}>
+              <Typography variant="omega" textColor="neutral600" as="p">
                 Example cURL Command
               </Typography>
-              <Box background="neutral100" padding={3} hasRadius>
+              <Box background="neutral100" padding={3} hasRadius marginTop={1}>
                 <pre style={{
                   margin: 0,
                   fontSize: '12px',
@@ -164,22 +160,23 @@ const filteredResponse = await fetch(url, {
                   {generateCurlCommand()}
                 </pre>
               </Box>
-              <Button
-                variant="ghost"
-                size="S"
-                marginTop={2}
-                onClick={() => handleCopy(generateCurlCommand(), 'curl')}
-                startIcon={copiedItem === 'curl' ? <Check /> : <Duplicate />}
-              >
-                {copiedItem === 'curl' ? 'Copied!' : 'Copy cURL'}
-              </Button>
+              <Box paddingTop={1}>
+                <Button
+                  variant="ghost"
+                  size="S"
+                  onClick={() => handleCopy(generateCurlCommand(), 'curl')}
+                  startIcon={copiedItem === 'curl' ? <Check /> : <Duplicate />}
+                >
+                  {copiedItem === 'curl' ? 'Copied!' : 'Copy cURL'}
+                </Button>
+              </Box>
             </Box>
 
             <Box>
-              <Typography variant="omega" textColor="neutral600" as="p" marginBottom={2}>
+              <Typography variant="omega" textColor="neutral600" as="p">
                 JavaScript Example
               </Typography>
-              <Box background="neutral100" padding={3} hasRadius>
+              <Box background="neutral100" padding={3} hasRadius marginTop={1}>
                 <pre style={{
                   margin: 0,
                   fontSize: '12px',
@@ -190,23 +187,24 @@ const filteredResponse = await fetch(url, {
                   {generateJavaScriptExample()}
                 </pre>
               </Box>
-              <Button
-                variant="ghost"
-                size="S"
-                marginTop={2}
-                onClick={() => handleCopy(generateJavaScriptExample(), 'js')}
-                startIcon={copiedItem === 'js' ? <Check /> : <Duplicate />}
-              >
-                {copiedItem === 'js' ? 'Copied!' : 'Copy JavaScript'}
-              </Button>
+              <Box paddingTop={1}>
+                <Button
+                  variant="ghost"
+                  size="S"
+                  onClick={() => handleCopy(generateJavaScriptExample(), 'js')}
+                  startIcon={copiedItem === 'js' ? <Check /> : <Duplicate />}
+                >
+                  {copiedItem === 'js' ? 'Copied!' : 'Copy JavaScript'}
+                </Button>
+              </Box>
             </Box>
 
             {exampleResponse && (
               <Box>
-                <Typography variant="omega" textColor="neutral600" as="p" marginBottom={2}>
+                <Typography variant="omega" textColor="neutral600" as="p">
                   Example Response
                 </Typography>
-                <Box background="neutral100" padding={3} hasRadius>
+                <Box background="neutral100" padding={3} hasRadius marginTop={1}>
                   <pre style={{
                     margin: 0,
                     fontSize: '12px',
@@ -223,16 +221,16 @@ const filteredResponse = await fetch(url, {
         )}
 
         <Box>
-          <Typography variant="omega" textColor="neutral600" as="p" marginBottom={2}>
+          <Typography variant="omega" textColor="neutral600" as="p">
             Available Features
           </Typography>
-          <Flex gap={2} wrap="wrap">
-            <Badge active>Filtering</Badge>
-            <Badge active>Sorting</Badge>
-            <Badge active>Pagination</Badge>
-            <Badge active>Field Selection</Badge>
-            <Badge active>Relationship Population</Badge>
-            <Badge active>Media Support</Badge>
+          <Flex gap={2} wrap="wrap" paddingTop={1}>
+            <Badge>Filtering</Badge>
+            <Badge>Sorting</Badge>
+            <Badge>Pagination</Badge>
+            <Badge>Field Selection</Badge>
+            <Badge>Relationships</Badge>
+            <Badge>Media</Badge>
           </Flex>
         </Box>
       </Flex>

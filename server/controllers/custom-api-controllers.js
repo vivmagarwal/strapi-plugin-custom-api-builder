@@ -199,8 +199,9 @@ module.exports = {
         });
 
       // Filter out the current API if editing (excludeId provided)
-      const conflictingAPIs = excludeId 
-        ? existingAPIs.filter(api => api.id !== parseInt(excludeId))
+      // excludeId may be documentId (UUID string) or numeric id
+      const conflictingAPIs = excludeId
+        ? existingAPIs.filter(api => api.documentId !== excludeId && api.id !== parseInt(excludeId))
         : existingAPIs;
 
       const isUnique = conflictingAPIs.length === 0;
@@ -253,7 +254,7 @@ module.exports = {
 
       ctx.send({
         slug,
-        apiEndpoint: `/api/custom-api/${slug}`,
+        apiEndpoint: `/custom-api/${slug}`,
         filterDocumentation: filterDocs,
         sortDocumentation: sortDocs,
         paginationDocumentation: paginationDocs
@@ -281,6 +282,18 @@ module.exports = {
         .plugin("custom-api")
         .service("customApiServices")
         .update(ctx.params.id, ctx.request.body);
+    } catch (error) {
+      ctx.throw(500, error);
+    }
+  },
+
+  async delete(ctx) {
+    const { id } = ctx.params;
+    try {
+      ctx.body = await strapi
+        .plugin("custom-api")
+        .service("customApiServices")
+        .delete(id);
     } catch (error) {
       ctx.throw(500, error);
     }

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { ArrowLeft } from "@strapi/icons";
 import { Check } from "@strapi/icons";
-import { Button, Flex, Box, Grid, TextInput, SingleSelect, SingleSelectOption, Typography } from "@strapi/design-system";
+import { Button, Flex, Box, Grid, TextInput, SingleSelect, SingleSelectOption, Typography, Field } from "@strapi/design-system";
 import { upperFirst, cloneDeepWith, cloneDeep } from '../../utils/helpers';
 import customApiRequest from "../../api/custom-api";
 import {
@@ -10,12 +10,43 @@ import {
 } from "../../utils/customApiBuilderUtils";
 import RenderDeeplyNestedObject from "../../components/RenderDeeplyNestedObject/index.jsx";
 import SlugInput from "../../components/SlugInput/index.jsx";
+import FieldSearch from "../../components/FieldSearch/index.jsx";
+import QueryVisualization from "../../components/QueryVisualization/index.jsx";
+
+function countFieldsRecursive(data) {
+  let total = 0;
+  let selected = 0;
+  const types = new Set();
+
+  const categories = ['fields', 'media', 'components', 'dynamiczones'];
+  categories.forEach((cat) => {
+    if (data[cat] && data[cat].length > 0) {
+      types.add(cat);
+      data[cat].forEach((item) => {
+        total++;
+        if (item.selected) selected++;
+      });
+    }
+  });
+
+  if (data.populate && Array.isArray(data.populate)) {
+    data.populate.forEach((nested) => {
+      const nestedCounts = countFieldsRecursive(nested);
+      total += nestedCounts.total;
+      selected += nestedCounts.selected;
+      nestedCounts.types.forEach((t) => types.add(t));
+    });
+  }
+
+  return { total, selected, types };
+}
 
 const CustomAPICustomizationPage = ({
   showCustomAPICustomizationPage,
   setShowCustomAPICustomizationPage,
   fetchData,
   isLoading,
+  onFeedback,
 }) => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
@@ -24,6 +55,64 @@ const CustomAPICustomizationPage = ({
   const [selectableData, setSelectableData] = useState({
     populate: [],
   });
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Form validation
+  const [nameError, setNameError] = useState(null);
+  const [nameTouched, setNameTouched] = useState(false);
+
+  // Field search/filter state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [typeFilters, setTypeFilters] = useState([]);
+
+  const isEditing = Boolean(showCustomAPICustomizationPage?.id);
+
+  // Compute field stats from selectable data
+  const fieldStats = useMemo(() => {
+    if (!selectableData || !selectableData.populate || !Array.isArray(selectableData.populate)) {
+      return { total: 0, selected: 0, types: [] };
+    }
+    let total = 0;
+    let selected = 0;
+    const types = new Set();
+    selectableData.populate.forEach((item) => {
+      const counts = countFieldsRecursive(item);
+      total += counts.total;
+      selected += counts.selected;
+      counts.types.forEach((t) => types.add(t));
+    });
+    return { total, selected, types: Array.from(types) };
+  }, [selectableData]);
+
+  const handleFieldSearch = useCallback((term, filters) => {
+    setSearchTerm(term);
+    setTypeFilters(filters || []);
+  }, []);
+
+  function validateName(value) {
+    if (!value || !value.trim()) {
+      return "Name is required";
+    }
+    if (value.trim().length < 2) {
+      return "Name must be at least 2 characters";
+    }
+    return null;
+  }
+
+  function handleNameChange(e) {
+    const value = e.target.value;
+    setName(value);
+    if (nameTouched) {
+      setNameError(validateName(value));
+    }
+  }
+
+  function handleNameBlur() {
+    setNameTouched(true);
+    setNameError(validateName(name));
+  }
+
+  const isFormValid = !validateName(name) && slug.trim().length > 0;
 
   useEffect(() => {
     (async () => {
@@ -196,12 +285,34 @@ const CustomAPICustomizationPage = ({
     setSelectableData(updatedData);
   }
 
+  function selectAllInCategory(tableName, categoryKey, selectAll) {
+    const result = cloneDeepWith(selectableData, (value) => {
+      if (value && value.table === tableName && value[categoryKey]) {
+        const updated = value[categoryKey].map((item) => ({
+          ...item,
+          selected: selectAll,
+        }));
+        return { ...value, [categoryKey]: updated };
+      }
+    });
+    setSelectableData(result);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
+    // Validate before submit
+    const nameValidationError = validateName(name);
+    if (nameValidationError) {
+      setNameTouched(true);
+      setNameError(nameValidationError);
+      return;
+    }
+
+    setIsSaving(true);
     try {
-      if (showCustomAPICustomizationPage && showCustomAPICustomizationPage.id) {
+      if (isEditing) {
         await customApiRequest.updateCustomApi(
           showCustomAPICustomizationPage.id,
           {
@@ -211,6 +322,7 @@ const CustomAPICustomizationPage = ({
             structure: selectableData,
           }
         );
+        if (onFeedback) onFeedback('success', `"${name}" has been updated successfully.`);
       } else {
         await customApiRequest.addCustomApi({
           name: name,
@@ -218,12 +330,16 @@ const CustomAPICustomizationPage = ({
           selectedContentType: selectedContentType,
           structure: selectableData,
         });
+        if (onFeedback) onFeedback('success', `"${name}" has been created successfully.`);
       }
 
       fetchData();
       setShowCustomAPICustomizationPage(false);
     } catch (e) {
       console.log("error", e);
+      if (onFeedback) onFeedback('danger', `Failed to ${isEditing ? 'update' : 'create'} "${name}". ${e.message || 'Please try again.'}`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -244,17 +360,18 @@ const CustomAPICustomizationPage = ({
           <Flex justifyContent="space-between" alignItems="center">
             <Flex direction="column" gap={1} alignItems="flex-start">
               <Typography variant="alpha" as="h1">
-                {upperFirst("Create a custom API")}
+                {isEditing ? `Edit: ${name}` : "Create a custom API"}
               </Typography>
               <Typography variant="epsilon" textColor="neutral600">
-                creating a new custom API
+                {isEditing ? "Modify your custom API configuration" : "Configure a new custom API endpoint"}
               </Typography>
             </Flex>
             <Button
               startIcon={<Check />}
               onClick={handleSubmit}
               type="button"
-              disabled={false}
+              disabled={!isFormValid}
+              loading={isSaving}
             >
               Save
             </Button>
@@ -272,14 +389,19 @@ const CustomAPICustomizationPage = ({
           >
             <Grid.Root gap={6}>
               <Grid.Item col={6} s={12}>
-                <TextInput
-                  placeholder="A descriptive name"
-                  label="Custom API Name"
-                  name="name"
-                  hint="A descriptive name"
-                  onChange={(e) => setName(e.target.value)}
-                  value={name}
-                />
+                <Field.Root name="name" error={nameTouched && nameError ? nameError : undefined}>
+                  <Field.Label required>Custom API Name</Field.Label>
+                  <TextInput
+                    placeholder="A descriptive name"
+                    name="name"
+                    onChange={handleNameChange}
+                    onBlur={handleNameBlur}
+                    value={name}
+                    aria-invalid={!!(nameTouched && nameError)}
+                  />
+                  <Field.Hint>A descriptive name for your custom API</Field.Hint>
+                  {nameTouched && nameError && <Field.Error>{nameError}</Field.Error>}
+                </Field.Root>
               </Grid.Item>
 
               <Grid.Item col={6} s={12}>
@@ -323,12 +445,7 @@ const CustomAPICustomizationPage = ({
               onClear={() => setSelectedContentType(undefined)}
               clearLabel="Clear content types"
               value={selectedContentType ? selectedContentType.uid : null}
-              disabled={
-                showCustomAPICustomizationPage &&
-                showCustomAPICustomizationPage.id
-                  ? true
-                  : false
-              }
+              disabled={isEditing}
               onChange={(val) => {
                 setSelectedContentType(
                   contentTypes &&
@@ -350,6 +467,18 @@ const CustomAPICustomizationPage = ({
           </Flex>
         </Box>
 
+        {/* Field Search */}
+        {selectableData && selectableData.populate && Array.isArray(selectableData.populate) && selectableData.populate.length > 0 && (
+          <Box style={{ marginTop: 10 }}>
+            <FieldSearch
+              onSearch={handleFieldSearch}
+              totalFields={fieldStats.total}
+              selectedFields={fieldStats.selected}
+              fieldTypes={fieldStats.types}
+            />
+          </Box>
+        )}
+
         <Box
           padding={10}
           background="neutral0"
@@ -368,14 +497,32 @@ const CustomAPICustomizationPage = ({
                 <RenderDeeplyNestedObject
                   key={item.table}
                   data={item}
+                  depth={0}
+                  searchTerm={searchTerm}
+                  typeFilters={typeFilters}
                   toggleSelectedOfField={toggleSelectedOfField}
                   toggleSelectedOfMedia={toggleSelectedOfMedia}
                   toggleSelectedOfComponent={toggleSelectedOfComponent}
                   toggleSelectedOfDynamicZone={toggleSelectedOfDynamicZone}
+                  selectAllInCategory={selectAllInCategory}
                 />
               );
             })}
         </Box>
+
+        {/* Query Visualization */}
+        {slug && selectedContentType && (
+          <Box style={{ marginTop: 10 }}>
+            <QueryVisualization
+              apiEndpoint={`/custom-api/${slug}`}
+              queryConfig={{
+                filters: true,
+                sort: true,
+                pagination: true,
+              }}
+            />
+          </Box>
+        )}
       </Box>
     </>
   );

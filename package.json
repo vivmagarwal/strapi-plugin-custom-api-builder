@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-custom-api",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "Create custom API endpoints from the Strapi admin panel - a visual API builder inspired by Drupal Views.",
   "strapi": {
     "name": "custom-api",

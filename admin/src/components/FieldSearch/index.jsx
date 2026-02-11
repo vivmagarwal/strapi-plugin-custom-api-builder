@@ -1,11 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { TextInput, Box, Typography, Badge, Flex } from '@strapi/design-system';
-import { Search } from '@strapi/icons';
+import { TextInput, Box, Typography, Badge, Flex, Button } from '@strapi/design-system';
+import { Search, Cross } from '@strapi/icons';
 
-/**
- * Field search component for filtering large field lists
- * Provides search, type filtering, and field count display
- */
 const FieldSearch = ({
   onSearch,
   totalFields = 0,
@@ -50,6 +46,8 @@ const FieldSearch = ({
     }
   }, [onSearch]);
 
+  const hasActiveFilters = searchTerm || selectedTypes.size > 0;
+
   return (
     <Box padding={4} background="neutral0" borderColor="neutral200" hasRadius>
       <Flex direction="column" gap={3} alignItems="stretch">
@@ -70,37 +68,41 @@ const FieldSearch = ({
           onChange={handleSearchChange}
           value={searchTerm}
           startAction={<Search />}
-          clearLabel="Clear search"
-          onClear={() => {
-            setSearchTerm('');
-            if (onSearch) onSearch('', Array.from(selectedTypes));
-          }}
         />
 
         {fieldTypes.length > 0 && (
           <Box>
-            <Typography variant="pi" textColor="neutral600" as="p" marginBottom={2}>
+            <Typography variant="pi" textColor="neutral600">
               Filter by type:
             </Typography>
-            <Flex gap={2} wrap="wrap">
+            <Flex gap={2} wrap="wrap" paddingTop={2}>
               {fieldTypes.map(type => (
-                <Badge
+                <Box
                   key={type}
-                  active={selectedTypes.has(type)}
+                  as="button"
+                  background={selectedTypes.has(type) ? 'primary100' : 'neutral100'}
+                  borderColor={selectedTypes.has(type) ? 'primary600' : 'neutral200'}
+                  padding={1}
+                  paddingLeft={3}
+                  paddingRight={3}
+                  hasRadius
                   onClick={() => handleTypeToggle(type)}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', border: '1px solid' }}
                 >
-                  {type}
-                </Badge>
+                  <Typography variant="pi" textColor={selectedTypes.has(type) ? 'primary600' : 'neutral700'}>
+                    {type}
+                  </Typography>
+                </Box>
               ))}
-              {(searchTerm || selectedTypes.size > 0) && (
-                <Badge
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="S"
+                  startIcon={<Cross />}
                   onClick={clearFilters}
-                  style={{ cursor: 'pointer' }}
-                  textColor="danger600"
                 >
                   Clear all
-                </Badge>
+                </Button>
               )}
             </Flex>
           </Box>

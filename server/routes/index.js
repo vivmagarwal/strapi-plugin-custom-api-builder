@@ -93,6 +93,16 @@ module.exports = [
   },
 
   {
+    method: "DELETE",
+    path: "/delete/:id",
+    handler: "customApiControllers.delete",
+    config: {
+      policies: [],
+      auth: false,
+    },
+  },
+
+  {
     method: "GET",
     path: "/test-em-out-do-not-use",
     handler: "customApiControllers.testEmOutDoNotUse",

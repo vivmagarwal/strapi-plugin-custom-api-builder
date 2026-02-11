@@ -15,7 +15,7 @@ module.exports = ({ strapi }) => ({
   },
 
   async findById(id, query) {
-    return await strapi.documents("plugin::custom-api.custom-api").findFirst({
+    return await strapi.documents("plugin::custom-api.custom-api").findOne({
       documentId: id,
       ...query
     });
@@ -32,6 +32,12 @@ module.exports = ({ strapi }) => ({
     return await strapi.documents("plugin::custom-api.custom-api").update({
       documentId: id,
       data
+    });
+  },
+
+  async delete(id) {
+    return await strapi.documents("plugin::custom-api.custom-api").delete({
+      documentId: id,
     });
   },
 });
